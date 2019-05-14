@@ -112,9 +112,11 @@ object MACDParamaterOptimization {
     //val transRatio: Double = 0.1
     //var asset: Double = principal
     //var stockNum: Double = 0
-    val Buf = ArrayBuffer[Double]()
+    var Buf: Double = -1
     val sellIndex = ArrayBuffer[Int]()
     val buyIndex = ArrayBuffer[Int]()
+    val priceDif = ArrayBuffer[Double]()
+    val returnRate = ArrayBuffer[Double]()
 
     for(i <- 1 to macdAryBuf.size-2){
       val preHis =  difAryBuf(i-1) - macdAryBuf(i-1)
@@ -123,8 +125,8 @@ object MACDParamaterOptimization {
       //var spend = asset * transRatio
       //var sellNumb = stockNum * transRatio
 
-      if(preHis * postHis < 0 && preHis < 0){ //negative to positive,
-        Buf += close
+      if(preHis * postHis < 0 && preHis < 0){ //negative to positive, buy
+        Buf = close
         //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
         //asset -= spend
         buyIndex += i
@@ -132,17 +134,25 @@ object MACDParamaterOptimization {
       else if(preHis * postHis < 0 && preHis > 0){
         //asset += indexCloseMap.get(i).toArray.mkString("").toDouble * sellNumb
         //stockNum -= sellNumb
+        if(Buf != -1){
+          sellIndex += i
+          priceDif += Buf - close
+          returnRate += (Buf - close)/Buf
 
-        sellIndex += i
+          Buf = -1
+        }
+
       }
 
     }
 
-    //println("\n Final: " + asset)
-
+    println("\n Rate of Return: " + returnRate)
+    println("\n Expectation of Return Rate: " + returnRate.sum/returnRate.size)
     println("\n Sell Index:" + sellIndex)
     println("\n Buy Index: " + buyIndex)
 
+    if(sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size) println("\n error occur!!!!!")
+    else println("\n Simulation complete")
   }
 
 }
