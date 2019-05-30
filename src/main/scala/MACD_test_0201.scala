@@ -48,9 +48,9 @@ object MACD_test_0201 {
       val emaAryBuffer = ArrayBuffer[Double]()
       var buf: Double = 0
 
-      for(j <- 0 until  indexCloseMap.size-1){
+      for(j <- indexCloseMap.size-1 to 0 by -1){
 
-        if(j-(Nday-1)>= 0) {
+        if(j <= indexCloseMap.size-Nday) {
           for (i <- j - (Nday - 1) to j) {
            // emaAryBuffer += indexCloseRDD.lookup(i).toArray.mkString("").toDouble
             emaAryBuffer += indexCloseMap.get(i).toArray.mkString("").toDouble

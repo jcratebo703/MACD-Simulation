@@ -1,25 +1,28 @@
-import org.apache.spark.sql.SparkSession
-//import breeze.linalg._
-//import breeze.plot._
-
+import org.apache.spark.sql._
+import  scala.collection.mutable._
+import  scala.math._
 
 val spark = SparkSession.builder()
   .appName("GitHub push counter")
   .master("local[*]")
   .getOrCreate()
 
-var df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
-var colDf = df.collect()
+val sc = spark.sparkContext
+val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
 
 
-val price = Array(for(i <- 0 to colDf.length-1) colDf(i)(4))
-println(price)
+val arybuf1 = ArrayBuffer[Double]()
+val arybuf2 = ArrayBuffer[Double]()
 
-var sum: Int = 0
-println(for(i <- 0 to price.length) sum += price(i).toString().toInt)
+arybuf1 += 1
+arybuf1 += 10
 
-for(i <- 0 to indexCloseRDD.count().toInt){
-  indexCloseRDD.lookup(i).foreach(println)
-}
+arybuf2 += 2
+arybuf2 += 20
 
-//println()
+arybuf2.foreach(x => x-1)
+
+for(i <- 10 to 1 by -1)println(i)
+
+df.show(10)
+

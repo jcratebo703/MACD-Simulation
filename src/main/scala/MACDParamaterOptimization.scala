@@ -13,8 +13,9 @@ object MACDParamaterOptimization {
 
     val sc = spark.sparkContext
     val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
+    val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
 
-    val rows: Array[Row] = df.collect()
+    val rows: Array[Row] = dfInverse.collect()
 
     val closeArr: Array[Double] = rows.map(_.getString(4)).map(_.toDouble)
     val closeRDD = sc.parallelize(closeArr)
@@ -42,30 +43,40 @@ object MACDParamaterOptimization {
 
     var index: Array[Int] = Array(12, 26, 9)
 
+
     val Ema = (index: Int, closeData: Map[Long, Double]) => {
       val alpha: Double = 2.0 / (index + 1.0)
       val Nday = (3.45 * (index + 1)).ceil.toInt
       val emaAryBuffer = ArrayBuffer[Double]()
       var buf: Double = 0
+      var T: Double = 0
+      var P: Double = 0
 
       emaCloseAryBuf.clear()
 
-      for(j <- 0 to closeData.size-1){
+      for(j <- 0 to indexCloseMap.size-1){
 
-        if(j-(Nday-1)>= 0) {
-          for (i <- j - (Nday - 1) to j) {
-            // emaAryBuffer += indexCloseRDD.lookup(i).toArray.mkString("").toDouble
-            emaAryBuffer += closeData.get(i).toArray.mkString("").toDouble
-            //var buf: Double = 0
+        if(j - (Nday-1) >= 0) {
+
+         if(j == Nday-1){
+            for (i <- 0 to Nday-1) {
+              // emaAryBuffer += indexCloseRDD.lookup(i).toArray.mkString("").toDouble
+              emaAryBuffer += closeData.get(i).toArray.mkString("").toDouble
+              //var buf: Double = 0
+            }
+
+            for(k <- 0 to emaAryBuffer.length-1){
+              buf += emaAryBuffer((k-(emaAryBuffer.length-1)).abs) * pow(1 - alpha, k)
+            }
+            emaCloseAryBuf += buf * alpha
+            buf = 0
           }
-
-          for(k <- 0 to emaAryBuffer.length-1){
-            buf += emaAryBuffer((k-(emaAryBuffer.length-1)).abs) * pow(1 - alpha, k)
-
+          else{
+            T = alpha * closeData.get(j).toArray.mkString("").toDouble
+            P = (1- alpha) * emaCloseAryBuf(emaAryBuffer.size-1)
+            emaCloseAryBuf += T+P
           }
-          emaCloseAryBuf += buf * alpha
           //println(emaCloseAryBuf)
-          buf = 0
           //emaAryBuffer.clear()
 
         }else{
@@ -73,19 +84,16 @@ object MACDParamaterOptimization {
         }
         //println(j)
       }
-
       emaCloseAryBuf
     }
-
     //Ema(index(0)).foreach(println)
-
 
     val emaAryBuf1 = ArrayBuffer[Double]()
     emaAryBuf1 ++= Ema(index(0), indexCloseMap)
-    //println(emaAryBuf1)
+    println("index0 : "+emaAryBuf1)
     val emaAryBuf2 = ArrayBuffer[Double]()
     emaAryBuf2 ++= Ema(index(1), indexCloseMap)
-    //println(emaAryBuf2)
+    println("index1 : "+emaAryBuf2)
 
     println("\nCloseAryBuf SIZE :" + emaAryBuf1.size)
 
@@ -117,21 +125,24 @@ object MACDParamaterOptimization {
     val buyIndex = ArrayBuffer[Int]()
     val priceDif = ArrayBuffer[Double]()
     val returnRate = ArrayBuffer[Double]()
+    var b, s: Int = 0
 
-    for(i <- 1 to macdAryBuf.size-2){
-      val preHis =  difAryBuf(i-1) - macdAryBuf(i-1)
-      val postHis = difAryBuf(i) - macdAryBuf(i)
-      val close: Double = indexCloseMap.get(i).toArray.mkString("").toDouble
+    for(i <- 0 to macdAryBuf.size-2){
+      val preHis =  difAryBuf(i) - macdAryBuf(i)
+      val postHis = difAryBuf(i+1) - macdAryBuf(i+1)
+      val close: Double = indexCloseMap.get(i+1).toArray.mkString("").toDouble
       //var spend = asset * transRatio
       //var sellNumb = stockNum * transRatio
 
-      if(preHis * postHis < 0 && preHis < 0){ //negative to positive, buy
+      if(preHis < 0 && postHis > 0){ //negative to positive, buy
         Buf = close
+        b += 1
         //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
         //asset -= spend
         buyIndex += i
       }
-      else if(preHis * postHis < 0 && preHis > 0){
+      else if(preHis > 0 && postHis < 0){
+        s += 1
         //asset += indexCloseMap.get(i).toArray.mkString("").toDouble * sellNumb
         //stockNum -= sellNumb
         if(Buf != -1){
@@ -141,18 +152,22 @@ object MACDParamaterOptimization {
 
           Buf = -1
         }
-
       }
+    }
 
+    if(sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size){
+      buyIndex.remove(buyIndex.size-1)
+      //println("\n error occur!!!!!")
     }
 
     println("\n Rate of Return: " + returnRate)
     println("\n Expectation of Return Rate: " + returnRate.sum/returnRate.size)
-    println("\n Sell Index:" + sellIndex)
-    println("\n Buy Index: " + buyIndex)
+    println("\n Sell Index:" + sellIndex + "\n Sell counts: " + sellIndex.size)
+    println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
 
-    if(sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size) println("\n error occur!!!!!")
-    else println("\n Simulation complete")
+    println("\n b : " + b + "\n s : " + s)
+
+    println("\n Simulation complete")
   }
 
 }

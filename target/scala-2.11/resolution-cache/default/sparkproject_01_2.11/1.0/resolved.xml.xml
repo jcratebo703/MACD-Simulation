@@ -4,7 +4,7 @@
 		module="sparkproject_01_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20190322235518"
+		publication="20190528192611"
 	>
 		<description>
 		SparkProject_01
@@ -37,5 +37,6 @@
 		<dependency org="org.apache.spark" name="spark-streaming_2.11" rev="2.0.0" conf="compile->default(compile)"/>
 		<dependency org="org.apache.spark" name="spark-sql_2.11" rev="2.0.0" conf="compile->default(compile)"/>
 		<dependency org="org.apache.spark" name="spark-streaming-kafka-0-8-assembly_2.11" rev="2.0.0" conf="compile->default(compile)"/>
+		<dependency org="mysql" name="mysql-connector-java" rev="5.1.47" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>
