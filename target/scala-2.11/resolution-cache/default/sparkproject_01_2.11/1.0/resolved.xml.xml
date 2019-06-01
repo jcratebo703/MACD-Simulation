@@ -4,7 +4,7 @@
 		module="sparkproject_01_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20190528192611"
+		publication="20190601052238"
 	>
 		<description>
 		SparkProject_01
@@ -32,11 +32,9 @@
 	<dependencies>
 		<dependency org="org.scala-lang" name="scala-compiler" rev="2.11.8" conf="scala-tool->default,optional(default)"/>
 		<dependency org="org.scala-lang" name="scala-library" rev="2.11.8" conf="scala-tool->default,optional(default);compile->default(compile)"/>
-		<dependency org="org.apache.spark" name="spark-core_2.11" rev="2.0.0" conf="compile->default(compile)"/>
-		<dependency org="log4j" name="log4j" rev="1.2.16" conf="compile->default(compile)"/>
-		<dependency org="org.apache.spark" name="spark-streaming_2.11" rev="2.0.0" conf="compile->default(compile)"/>
-		<dependency org="org.apache.spark" name="spark-sql_2.11" rev="2.0.0" conf="compile->default(compile)"/>
-		<dependency org="org.apache.spark" name="spark-streaming-kafka-0-8-assembly_2.11" rev="2.0.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-core_2.11" rev="2.3.1" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-sql_2.11" rev="2.3.1" conf="compile->default(compile)"/>
+		<dependency org="com.crealytics" name="spark-excel_2.11" rev="0.11.1" conf="compile->default(compile)"/>
 		<dependency org="mysql" name="mysql-connector-java" rev="5.1.47" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

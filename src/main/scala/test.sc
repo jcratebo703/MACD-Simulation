@@ -8,21 +8,17 @@ val spark = SparkSession.builder()
   .getOrCreate()
 
 val sc = spark.sparkContext
-val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
 
+def readExcel(file: String): DataFrame = spark.sqlContext.read
+  .format("com.crealytics.spark.excel")
+  .option("location", file)
+  .option("useHeader", "true")
+  .option("treatEmptyValuesAsNulls", "true")
+  .option("inferSchema", "true")
+  .option("addColorColumns", "False")
+  .load()
 
-val arybuf1 = ArrayBuffer[Double]()
-val arybuf2 = ArrayBuffer[Double]()
+val data = readExcel("path to your excel file")
 
-arybuf1 += 1
-arybuf1 += 10
-
-arybuf2 += 2
-arybuf2 += 20
-
-arybuf2.foreach(x => x-1)
-
-for(i <- 10 to 1 by -1)println(i)
-
-df.show(10)
+data.show(false)
 

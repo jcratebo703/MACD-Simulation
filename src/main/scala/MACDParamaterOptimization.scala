@@ -54,7 +54,7 @@ object MACDParamaterOptimization {
 
       emaCloseAryBuf.clear()
 
-      for(j <- 0 to indexCloseMap.size-1){
+      for(j <- 0 to closeData.size-1){
 
         if(j - (Nday-1) >= 0) {
 
@@ -73,7 +73,7 @@ object MACDParamaterOptimization {
           }
           else{
             T = alpha * closeData.get(j).toArray.mkString("").toDouble
-            P = (1- alpha) * emaCloseAryBuf(emaAryBuffer.size-1)
+            P = (1- alpha) * emaCloseAryBuf(emaCloseAryBuf.size-1)
             emaCloseAryBuf += T+P
           }
           //println(emaCloseAryBuf)
@@ -97,32 +97,30 @@ object MACDParamaterOptimization {
 
     println("\nCloseAryBuf SIZE :" + emaAryBuf1.size)
 
+    val longestDay: Int = (3.45 * (index(1) + 1)).ceil.toInt
+
     val difAryBuf = ArrayBuffer[Double]()
-    for(i <- 0 to emaAryBuf1.size-1){
+    for(i <- longestDay-1 to emaAryBuf1.size-1){
       difAryBuf += emaAryBuf1(i) - emaAryBuf2(i)
     }
-    println("\nDIF: " + difAryBuf)
+    println("\nDIF: " + difAryBuf + "\n DIF length: " + difAryBuf.size)
+
+
 
     val difMap = sc.parallelize(difAryBuf).zipWithIndex.map{case (k, v) => (v, k)}.collect().toMap
 
     val macdAryBuf = ArrayBuffer[Double]()
     macdAryBuf ++= Ema(index(2), difMap)
-    println("\nMACD: " + macdAryBuf)
-
-//    println(indexCloseMap.size)
-//    println(macdAryBuf.size)
-//    println(difAryBuf.size)
-//    println(emaAryBuf1.size)
+    println("\nMACD: " + macdAryBuf+ "\n MACD length: " + macdAryBuf.size)
 
     /* Simulation */
 
-    //val principal: Double = 1000000
-    //val transRatio: Double = 0.1
-    //var asset: Double = principal
-    //var stockNum: Double = 0
+
     var Buf: Double = -1
     val sellIndex = ArrayBuffer[Int]()
     val buyIndex = ArrayBuffer[Int]()
+    val sellPrice = ArrayBuffer[Double]()
+    val buyPrice = ArrayBuffer[Double]()
     val priceDif = ArrayBuffer[Double]()
     val returnRate = ArrayBuffer[Double]()
     var b, s: Int = 0
@@ -130,25 +128,27 @@ object MACDParamaterOptimization {
     for(i <- 0 to macdAryBuf.size-2){
       val preHis =  difAryBuf(i) - macdAryBuf(i)
       val postHis = difAryBuf(i+1) - macdAryBuf(i+1)
-      val close: Double = indexCloseMap.get(i+1).toArray.mkString("").toDouble
+      val close: Double = indexCloseMap.get(i+1+longestDay-1).toArray.mkString("").toDouble
       //var spend = asset * transRatio
       //var sellNumb = stockNum * transRatio
 
       if(preHis < 0 && postHis > 0){ //negative to positive, buy
         Buf = close
         b += 1
+        buyPrice += close
         //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
         //asset -= spend
-        buyIndex += i
+        buyIndex += i+1
       }
       else if(preHis > 0 && postHis < 0){
         s += 1
         //asset += indexCloseMap.get(i).toArray.mkString("").toDouble * sellNumb
         //stockNum -= sellNumb
         if(Buf != -1){
-          sellIndex += i
+          sellIndex += i+1
           priceDif += Buf - close
-          returnRate += (Buf - close)/Buf
+          returnRate += (close-Buf)/Buf
+          sellPrice += close
 
           Buf = -1
         }
@@ -157,13 +157,23 @@ object MACDParamaterOptimization {
 
     if(sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size){
       buyIndex.remove(buyIndex.size-1)
+      buyPrice.remove(buyPrice.size-1)
       //println("\n error occur!!!!!")
     }
 
-    println("\n Rate of Return: " + returnRate)
-    println("\n Expectation of Return Rate: " + returnRate.sum/returnRate.size)
-    println("\n Sell Index:" + sellIndex + "\n Sell counts: " + sellIndex.size)
+    var firstBuy: Double = indexCloseMap.get(buyIndex(0)+longestDay-1).toArray.mkString("").toDouble
+    var lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size-1)+longestDay-1).toArray.mkString("").toDouble
+
+    println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
     println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
+    println("\n Sell Price: " + sellPrice)
+    println("\n Buy Price: " + buyPrice)
+    println("\n Rate of Return: " + returnRate)
+    println("\n Maximum: " + returnRate.max)
+    println("\n Minimum: " + returnRate.min)
+    println("\n Cumulative Return Rate: " + (lastSell-firstBuy)/firstBuy)
+    println("\n Expectation of Return Rate: " + returnRate.sum/returnRate.size)
+
 
     println("\n b : " + b + "\n s : " + s)
 
