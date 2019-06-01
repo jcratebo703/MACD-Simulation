@@ -13,7 +13,7 @@ object test {
       .master("local[*]")
       .getOrCreate()
 
-//    val sc = spark.sparkContext
+    val sc = spark.sparkContext
 //    val dfp = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/畢專/CSV/tejdb_20190129160802.csv" )
 //    val withIDs = dfp.withColumn("id", monotonically_increasing_id())
 //    val cleanedDf = withIDs.filter(withIDs("id") >= 3)
@@ -60,15 +60,16 @@ object test {
     val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id()).filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
     val ppdf = dfs.reduce(_.union(_))
 
-    dfs(1).show()
-    dfs(2).show()
-    dfs(3).show()
-    dfs(4).show()
+    println(dfs.size)
+//    dfs(1).show()
+//    dfs(2).show()
+//    dfs(3).show()
+//    dfs(4).show()
 
 
 
-    ppdf.printSchema()
-    ppdf.show(800)
+//    ppdf.printSchema()
+//    ppdf.show(800)
 
    // println(ppdf.count())
 

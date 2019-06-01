@@ -13,8 +13,9 @@ object MACDParamaterOptimization {
 
     val sc = spark.sparkContext
     val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
-    val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
 
+    val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
+    dfInverse.show()
     val rows: Array[Row] = dfInverse.collect()
 
     val closeArr: Array[Double] = rows.map(_.getString(4)).map(_.toDouble)
@@ -90,11 +91,10 @@ object MACDParamaterOptimization {
 
     val emaAryBuf1 = ArrayBuffer[Double]()
     emaAryBuf1 ++= Ema(index(0), indexCloseMap)
-    println("index0 : "+emaAryBuf1)
+    //println("index0 : "+emaAryBuf1)
     val emaAryBuf2 = ArrayBuffer[Double]()
     emaAryBuf2 ++= Ema(index(1), indexCloseMap)
-    println("index1 : "+emaAryBuf2)
-
+    //println("index1 : "+emaAryBuf2)
     println("\nCloseAryBuf SIZE :" + emaAryBuf1.size)
 
     val longestDay: Int = (3.45 * (index(1) + 1)).ceil.toInt
@@ -103,15 +103,16 @@ object MACDParamaterOptimization {
     for(i <- longestDay-1 to emaAryBuf1.size-1){
       difAryBuf += emaAryBuf1(i) - emaAryBuf2(i)
     }
-    println("\nDIF: " + difAryBuf + "\n DIF length: " + difAryBuf.size)
-
+    //println("\nDIF: " + difAryBuf)
+    println("\n DIF length: " + difAryBuf.size)
 
 
     val difMap = sc.parallelize(difAryBuf).zipWithIndex.map{case (k, v) => (v, k)}.collect().toMap
 
     val macdAryBuf = ArrayBuffer[Double]()
     macdAryBuf ++= Ema(index(2), difMap)
-    println("\nMACD: " + macdAryBuf+ "\n MACD length: " + macdAryBuf.size)
+    //println("\nMACD: " + macdAryBuf)
+    println( "\n MACD length: " + macdAryBuf.size)
 
     /* Simulation */
 
