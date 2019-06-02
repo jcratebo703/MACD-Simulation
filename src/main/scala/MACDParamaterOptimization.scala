@@ -1,5 +1,5 @@
 import org.apache.spark.sql.{Row, SparkSession}
-
+import scala.util.control.Breaks._
 import scala.collection.mutable.ArrayBuffer
 import scala.math.pow
 
@@ -42,8 +42,12 @@ object MACDParamaterOptimization {
 
     val indexCloseMap = indexCloseRDD.collect().toMap
 
-    var index: Array[Int] = Array(12, 26, 9)
+    val index: Array[Int] = Array(12, 26, 9)
+    var opIndex: String = ""
+    var opMap: Map[String, Double] = Map()
 
+    val typeOneCrashFile = ArrayBuffer[String]()
+    val typeTwoCrashFile = ArrayBuffer[String]()
 
     val Ema = (index: Int, closeData: Map[Long, Double]) => {
       val alpha: Double = 2.0 / (index + 1.0)
@@ -89,96 +93,136 @@ object MACDParamaterOptimization {
     }
     //Ema(index(0)).foreach(println)
 
-    val emaAryBuf1 = ArrayBuffer[Double]()
-    emaAryBuf1 ++= Ema(index(0), indexCloseMap)
-    //println("index0 : "+emaAryBuf1)
-    val emaAryBuf2 = ArrayBuffer[Double]()
-    emaAryBuf2 ++= Ema(index(1), indexCloseMap)
-    //println("index1 : "+emaAryBuf2)
-    println("\nCloseAryBuf SIZE :" + emaAryBuf1.size)
+    for(x <- 2 until 50){
+      for(y <- x + 1 until 51){
+        for(z <- 2 until 50){
 
-    val longestDay: Int = (3.45 * (index(1) + 1)).ceil.toInt
+          opIndex = x.toString + "," + y.toString + "," +z.toString
 
-    val difAryBuf = ArrayBuffer[Double]()
-    for(i <- longestDay-1 to emaAryBuf1.size-1){
-      difAryBuf += emaAryBuf1(i) - emaAryBuf2(i)
-    }
-    //println("\nDIF: " + difAryBuf)
-    println("\n DIF length: " + difAryBuf.size)
+          index(0) = x
+          index(1) = y
+          index(2) = z
+
+          val emaAryBuf1 = ArrayBuffer[Double]()
+          emaAryBuf1 ++= Ema(index(0), indexCloseMap)
+          //println("index0 : "+emaAryBuf1)
+          val emaAryBuf2 = ArrayBuffer[Double]()
+          emaAryBuf2 ++= Ema(index(1), indexCloseMap)
+          //println("index1 : "+emaAryBuf2)
+          println("\nCloseAryBuf SIZE :" + emaAryBuf1.size)
+
+          val longestDay: Int = (3.45 * (index(1) + 1)).ceil.toInt
+
+          val difAryBuf = ArrayBuffer[Double]()
+          for(i <- longestDay-1 to emaAryBuf1.size-1){
+            difAryBuf += emaAryBuf1(i) - emaAryBuf2(i)
+          }
+          //println("\nDIF: " + difAryBuf)
+          println("\n DIF length: " + difAryBuf.size)
 
 
-    val difMap = sc.parallelize(difAryBuf).zipWithIndex.map{case (k, v) => (v, k)}.collect().toMap
+          val difMap = sc.parallelize(difAryBuf).zipWithIndex.map{case (k, v) => (v, k)}.collect().toMap
 
-    val macdAryBuf = ArrayBuffer[Double]()
-    macdAryBuf ++= Ema(index(2), difMap)
-    //println("\nMACD: " + macdAryBuf)
-    println( "\n MACD length: " + macdAryBuf.size)
+          val macdAryBuf = ArrayBuffer[Double]()
+          macdAryBuf ++= Ema(index(2), difMap)
+          //println("\nMACD: " + macdAryBuf)
+          println( "\n MACD length: " + macdAryBuf.size)
 
-    /* Simulation */
+          breakable{
+
+//            if(macdAryBuf.size <= 0){
+//              typeOneCrashFile += excelFiles(terms)
+//              break()
+//            }
 
 
-    var Buf: Double = -1
-    val sellIndex = ArrayBuffer[Int]()
-    val buyIndex = ArrayBuffer[Int]()
-    val sellPrice = ArrayBuffer[Double]()
-    val buyPrice = ArrayBuffer[Double]()
-    val priceDif = ArrayBuffer[Double]()
-    val returnRate = ArrayBuffer[Double]()
-    var b, s: Int = 0
+            /* Simulation */
 
-    for(i <- 0 to macdAryBuf.size-2){
-      val preHis =  difAryBuf(i) - macdAryBuf(i)
-      val postHis = difAryBuf(i+1) - macdAryBuf(i+1)
-      val close: Double = indexCloseMap.get(i+1+longestDay-1).toArray.mkString("").toDouble
-      //var spend = asset * transRatio
-      //var sellNumb = stockNum * transRatio
+            var Buf: Double = -1
+            val sellIndex = ArrayBuffer[Int]()
+            val buyIndex = ArrayBuffer[Int]()
+            val sellPrice = ArrayBuffer[Double]()
+            val buyPrice = ArrayBuffer[Double]()
+            val priceDif = ArrayBuffer[Double]()
+            val returnRate = ArrayBuffer[Double]()
+            var b, s: Int = 0
 
-      if(preHis < 0 && postHis > 0){ //negative to positive, buy
-        Buf = close
-        b += 1
-        buyPrice += close
-        //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
-        //asset -= spend
-        buyIndex += i+1
-      }
-      else if(preHis > 0 && postHis < 0){
-        s += 1
-        //asset += indexCloseMap.get(i).toArray.mkString("").toDouble * sellNumb
-        //stockNum -= sellNumb
-        if(Buf != -1){
-          sellIndex += i+1
-          priceDif += Buf - close
-          returnRate += (close-Buf)/Buf
-          sellPrice += close
+            for(i <- 0 to macdAryBuf.size-2){
+              val preHis =  difAryBuf(i) - macdAryBuf(i)
+              val postHis = difAryBuf(i+1) - macdAryBuf(i+1)
+              val close: Double = indexCloseMap.get(i+1+longestDay-1).toArray.mkString("").toDouble
+              //var spend = asset * transRatio
+              //var sellNumb = stockNum * transRatio
 
-          Buf = -1
+              if(preHis < 0 && postHis > 0){ //negative to positive, buy
+                Buf = close
+                b += 1
+                buyPrice += close
+                //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
+                //asset -= spend
+                buyIndex += i+1
+              }
+              else if(preHis > 0 && postHis < 0){
+                s += 1
+                //asset += indexCloseMap.get(i).toArray.mkString("").toDouble * sellNumb
+                //stockNum -= sellNumb
+                if(Buf != -1){
+                  sellIndex += i+1
+                  priceDif += Buf - close
+                  returnRate += (close-Buf)/Buf
+                  sellPrice += close
+
+                  Buf = -1
+                }
+              }
+            }
+
+            if(sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size){
+              buyIndex.remove(buyIndex.size-1)
+              buyPrice.remove(buyPrice.size-1)
+              //println("\n error occur!!!!!")
+            }
+
+            if(buyIndex.size <= 0){
+              typeTwoCrashFile += opIndex
+              break()
+            }
+
+            println("count:" +buyIndex.size)
+            var firstBuy: Double = indexCloseMap.get(buyIndex(0)+longestDay-1).toArray.mkString("").toDouble
+            var lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size-1)+longestDay-1).toArray.mkString("").toDouble
+            val ERate = returnRate.sum/returnRate.size
+
+            println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
+            println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
+            println("\n Sell Price: " + sellPrice)
+            println("\n Buy Price: " + buyPrice)
+            println("\n Rate of Return: " + returnRate)
+            println("\n Maximum: " + returnRate.max)
+            println("\n Minimum: " + returnRate.min)
+            println("\n Cumulative Return Rate: " + (lastSell-firstBuy)/firstBuy)
+            println("\n Expectation of Return Rate: " + ERate)
+
+            println("\n b : " + b + "\n s : " + s)
+
+            println("\n Simulation complete")
+
+            for(i <- 0 to 100) println(opIndex)
+
+            opMap += (opIndex -> ERate)
+
+          }
         }
       }
     }
+    opMap.foreach(println)
 
-    if(sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size){
-      buyIndex.remove(buyIndex.size-1)
-      buyPrice.remove(buyPrice.size-1)
-      //println("\n error occur!!!!!")
-    }
+    typeTwoCrashFile.foreach(x => println("\n Index : " + x + " don't have any transaction!!"))
+    //typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
 
-    var firstBuy: Double = indexCloseMap.get(buyIndex(0)+longestDay-1).toArray.mkString("").toDouble
-    var lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size-1)+longestDay-1).toArray.mkString("").toDouble
+    println("\n Max: " + opMap.maxBy(_._2))
+    println("\n Length: " + opMap.size)
 
-    println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
-    println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
-    println("\n Sell Price: " + sellPrice)
-    println("\n Buy Price: " + buyPrice)
-    println("\n Rate of Return: " + returnRate)
-    println("\n Maximum: " + returnRate.max)
-    println("\n Minimum: " + returnRate.min)
-    println("\n Cumulative Return Rate: " + (lastSell-firstBuy)/firstBuy)
-    println("\n Expectation of Return Rate: " + returnRate.sum/returnRate.size)
-
-
-    println("\n b : " + b + "\n s : " + s)
-
-    println("\n Simulation complete")
   }
 
 }

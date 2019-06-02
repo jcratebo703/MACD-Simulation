@@ -50,7 +50,8 @@ object multipleFile_test {
       val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id()).filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
       //val ppdf = dfs.reduce(_.union(_))
 
-      val CrashFile = ArrayBuffer[String]()
+      val typeOneCrashFile = ArrayBuffer[String]()
+      val typeTwoCrashFile = ArrayBuffer[String]()
 
       val Ema = (index: Int, closeData: Map[Long, Double]) => {
         val alpha: Double = 2.0 / (index + 1.0)
@@ -154,7 +155,7 @@ object multipleFile_test {
         breakable{
 
           if(macdAryBuf.size <= 0){
-            CrashFile += excelFiles(terms)
+            typeOneCrashFile += excelFiles(terms)
             break()
           }
 
@@ -206,6 +207,11 @@ object multipleFile_test {
             //println("\n error occur!!!!!")
           }
 
+          if(buyIndex.size <= 0){
+            typeTwoCrashFile += excelFiles(terms)
+            break()
+          }
+
           val firstBuy: Double = indexCloseMap.get(buyIndex(0)+longestDay-1).toArray.mkString("").toDouble
           val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size-1)+longestDay-1).toArray.mkString("").toDouble
 
@@ -227,6 +233,7 @@ object multipleFile_test {
           println("\n Simulation complete")
         }
       }
-      CrashFile.foreach(x => println("File : " + x + " don't have enough data!!"))
+      //typeTwoCrashFile.foreach(x => println("\n File : " + x + " don't have any transaction!!"))
+      typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
     }
 }

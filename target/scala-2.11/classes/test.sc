@@ -9,16 +9,22 @@ val spark = SparkSession.builder()
 
 val sc = spark.sparkContext
 
-def readExcel(file: String): DataFrame = spark.sqlContext.read
-  .format("com.crealytics.spark.excel")
-  .option("location", file)
-  .option("useHeader", "true")
-  .option("treatEmptyValuesAsNulls", "true")
-  .option("inferSchema", "true")
-  .option("addColorColumns", "False")
-  .load()
+//def readExcel(file: String): DataFrame = spark.sqlContext.read
+//  .format("com.crealytics.spark.excel")
+//  .option("location", file)
+//  .option("useHeader", "true")
+//  .option("treatEmptyValuesAsNulls", "true")
+//  .option("inferSchema", "true")
+//  .option("addColorColumns", "False")
+//  .load()
+//
+//val data = readExcel("path to your excel file")
+//
+//data.show(false)
 
-val data = readExcel("path to your excel file")
+var index: Array[Int] = Array(12, 26, 9)
 
-data.show(false)
+index(0) = 1
+
+index.foreach(print)
 

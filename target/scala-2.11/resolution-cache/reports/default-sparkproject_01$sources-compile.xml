@@ -7,7 +7,7 @@
 		revision="1.0"
 		conf="compile"
 		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, pom, scala-tool"
-		date="20190601212202"/>
+		date="20190602193814"/>
 	<dependencies>
 		<module organisation="com.crealytics" name="spark-excel_2.11">
 			<revision name="0.11.1" status="release" pubdate="20190131050441" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/crealytics/spark-excel" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="156">

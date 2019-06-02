@@ -8,7 +8,7 @@ object DBTest extends App {
   val driver = "com.mysql.jdbc.Driver"
   val username = "root"
   val password = "jcratebo703"
-  var connection:Connection = _
+  var connection: Connection = _
   try {
     Class.forName(driver)
     connection = DriverManager.getConnection(url, username, password)
