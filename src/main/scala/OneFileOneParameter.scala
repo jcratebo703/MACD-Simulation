@@ -1,7 +1,8 @@
 import org.apache.spark.sql.{Row, SparkSession}
 import scala.util.control.Breaks._
 import scala.collection.mutable.ArrayBuffer
-import scala.math.pow
+import breeze.linalg._
+import breeze.numerics._
 
 object OneFileOneParameter {
   def main(args: Array[String]): Unit = {

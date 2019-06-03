@@ -1,14 +1,22 @@
 import java.io.File
+
 import scala.util.control.Breaks._
 import org.apache.spark.sql.functions.{col, monotonically_increasing_id}
 import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+import breeze.linalg._
+import breeze.numerics._
 
 import scala.collection.mutable.ArrayBuffer
-import scala.math.pow
+import java.sql.{Connection, DriverManager, PreparedStatement}
 
-object multipleFile_test {
-    def main(args: Array[String]): Unit = {
+
+object multipleFile_test extends App{
+      val url = "jdbc:mysql://localhost:3306/mysql"
+      val driver = "com.mysql.jdbc.Driver"
+      val username = "root"
+      val password = "jcratebo703"
+      var connection: Connection = _
 
       val spark = SparkSession.builder()
         .appName("GitHub push counter")
@@ -49,6 +57,8 @@ object multipleFile_test {
 
       val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id()).filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
       //val ppdf = dfs.reduce(_.union(_))
+
+      val trimFiles = excelFiles.map(x =>  x.replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", ""))
 
       val typeOneCrashFile = ArrayBuffer[String]()
       val typeTwoCrashFile = ArrayBuffer[String]()
@@ -95,7 +105,7 @@ object multipleFile_test {
         emaCloseAryBuf
       }
 
-      for(terms <- 0 until dfs.size-1){
+      for(terms <- 0 to dfs.size-1){
 
         val rows: Array[Row] = dfs(terms).collect()
 
@@ -155,7 +165,7 @@ object multipleFile_test {
         breakable{
 
           if(macdAryBuf.size <= 0){
-            typeOneCrashFile += excelFiles(terms)
+            typeOneCrashFile += trimFiles(terms)
             break()
           }
 
@@ -208,12 +218,18 @@ object multipleFile_test {
           }
 
           if(buyIndex.size <= 0){
-            typeTwoCrashFile += excelFiles(terms)
+            typeTwoCrashFile += trimFiles(terms)
             break()
           }
 
           val firstBuy: Double = indexCloseMap.get(buyIndex(0)+longestDay-1).toArray.mkString("").toDouble
           val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size-1)+longestDay-1).toArray.mkString("").toDouble
+
+          val count = returnRate.size
+          val mean = returnRate.sum/count
+          val devs = returnRate.map(x => pow(x - mean, 2))
+          val stddev = sqrt(devs.sum / (count - 1))
+          val probability = 0.5 * (1 + erf((0 - mean) / stddev * sqrt(2)))
 
           println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
           println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
@@ -223,17 +239,48 @@ object multipleFile_test {
           println("\n Maximum: " + returnRate.max)
           println("\n Minimum: " + returnRate.min)
           println("\n Cumulative Return Rate: " + (lastSell-firstBuy)/firstBuy)
-          println("\n Expectation of Return Rate: " + returnRate.sum/returnRate.size)
+          println("\n Expectation of Return Rate: " + mean)
+          println("\n Standard Deviation: " + stddev)
+          println("\n Probability: " + probability)
           println("\n Terms: " + (terms+1))
           println("\n File number: " + dfs.size)
-
 
           println("\n b : " + b + "\n s : " + s)
 
           println("\n Simulation complete")
+
+          //MySQL connection
+          try {
+            Class.forName(driver)
+            connection = DriverManager.getConnection(url, username, password)
+            //val statement = connection.createStatement
+            //    val rs = statement.executeQuery("SELECT Name, TranFrequency FROM scalaTest.cop")
+            //    while (rs.next) {
+            //      val name = rs.getString("Name")
+            //      val freq = rs.getInt("TranFrequency")
+            //      println("name = %s, freq = %d".format(name,freq))
+            //    }
+
+            val insertSQL = "INSERT INTO scalaTest.cop (Name, TranFrequency, CRate, ERate, STDDEV, Probability) VALUES(?, ?, ?, ?, ?, ?)"
+
+            val prep: PreparedStatement = connection.prepareStatement(insertSQL)
+
+            prep.setString(1, trimFiles(terms))
+            prep.setInt(2, count)
+            prep.setDouble(3, (lastSell-firstBuy)/firstBuy)
+            prep.setDouble(4, mean)
+            prep.setDouble(5, stddev)
+            prep.setDouble(6, probability)
+            prep.execute()
+
+            prep.close()
+
+          } catch {
+            case e: Exception => e.printStackTrace
+          }
+          connection.close
         }
       }
-      //typeTwoCrashFile.foreach(x => println("\n File : " + x + " don't have any transaction!!"))
+      typeTwoCrashFile.foreach(x => println("\n File : " + x + " don't have any transaction!!"))
       typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
-    }
 }

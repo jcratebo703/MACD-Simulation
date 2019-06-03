@@ -58,9 +58,13 @@ object test {
     excelFiles.foreach(println)
 
     val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id()).filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
-    val ppdf = dfs.reduce(_.union(_))
+   // val ppdf = dfs.reduce(_.union(_))
 
-    println(dfs.size)
+    val trimFiles = excelFiles.map(x =>  x.replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", ""))
+   trimFiles.foreach(println)
+
+//    val t = excelFiles(0).replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", "")
+//    println(t)
 //    dfs(1).show()
 //    dfs(2).show()
 //    dfs(3).show()

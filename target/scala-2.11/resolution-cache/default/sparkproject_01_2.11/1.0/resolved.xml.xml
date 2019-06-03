@@ -4,7 +4,7 @@
 		module="sparkproject_01_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20190601052238"
+		publication="20190603172412"
 	>
 		<description>
 		SparkProject_01
@@ -36,5 +36,8 @@
 		<dependency org="org.apache.spark" name="spark-sql_2.11" rev="2.3.1" conf="compile->default(compile)"/>
 		<dependency org="com.crealytics" name="spark-excel_2.11" rev="0.11.1" conf="compile->default(compile)"/>
 		<dependency org="mysql" name="mysql-connector-java" rev="5.1.47" conf="compile->default(compile)"/>
+		<dependency org="org.scalanlp" name="breeze_2.11" rev="0.13.2" conf="compile->default(compile)"/>
+		<dependency org="org.scalanlp" name="breeze-natives_2.11" rev="0.13.2" conf="compile->default(compile)"/>
+		<dependency org="org.scalanlp" name="breeze-viz_2.11" rev="0.13.2" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>
