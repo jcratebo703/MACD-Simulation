@@ -261,7 +261,7 @@ object multipleFile_test extends App{
             //      println("name = %s, freq = %d".format(name,freq))
             //    }
 
-            val insertSQL = "INSERT INTO scalaTest.cop (Name, TranFrequency, CRate, ERate, STDDEV, Probability) VALUES(?, ?, ?, ?, ?, ?)"
+            val insertSQL = "INSERT INTO scalaTest.cop (Name, TranFrequency, CRate, ERate, STDDEV, Probability, max, min) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
 
             val prep: PreparedStatement = connection.prepareStatement(insertSQL)
 
@@ -271,6 +271,8 @@ object multipleFile_test extends App{
             prep.setDouble(4, mean)
             prep.setDouble(5, stddev)
             prep.setDouble(6, probability)
+            prep.setDouble(7, returnRate.max)
+            prep.setDouble(8, returnRate.min)
             prep.execute()
 
             prep.close()
