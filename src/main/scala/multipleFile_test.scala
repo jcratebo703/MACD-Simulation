@@ -26,7 +26,7 @@ object multipleFile_test extends App{
       val sc = spark.sparkContext
 //      val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
 //      val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
-      val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/三下/Financial Management/Final Project Data"
+      val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/三下/Financial Management/FinalProject/Final Project Data/"
 
       val Schema = StructType(Array(
         StructField("Date", StringType, nullable = false),
@@ -224,12 +224,13 @@ object multipleFile_test extends App{
 
           val firstBuy: Double = indexCloseMap.get(buyIndex(0)+longestDay-1).toArray.mkString("").toDouble
           val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size-1)+longestDay-1).toArray.mkString("").toDouble
+          val cRate: Double = (lastSell-firstBuy)/firstBuy
 
           val count = returnRate.size
           val mean = returnRate.sum/count
           val devs = returnRate.map(x => pow(x - mean, 2))
           val stddev = sqrt(devs.sum / (count - 1))
-          val probability = 0.5 * (1 + erf((0 - mean) / stddev * sqrt(2)))
+          val probability = 1-(0.5 * (1 + erf((0 - mean) / stddev * sqrt(2))))
 
           println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
           println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
@@ -238,7 +239,7 @@ object multipleFile_test extends App{
           println("\n Rate of Return: " + returnRate)
           println("\n Maximum: " + returnRate.max)
           println("\n Minimum: " + returnRate.min)
-          println("\n Cumulative Return Rate: " + (lastSell-firstBuy)/firstBuy)
+          println("\n Cumulative Return Rate: " + cRate)
           println("\n Expectation of Return Rate: " + mean)
           println("\n Standard Deviation: " + stddev)
           println("\n Probability: " + probability)
@@ -267,7 +268,7 @@ object multipleFile_test extends App{
 
             prep.setString(1, trimFiles(terms))
             prep.setInt(2, count)
-            prep.setDouble(3, (lastSell-firstBuy)/firstBuy)
+            prep.setDouble(3, cRate)
             prep.setDouble(4, mean)
             prep.setDouble(5, stddev)
             prep.setDouble(6, probability)

@@ -66,8 +66,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/multipleFile_test.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="266" selection-start-line="266" selection-end-line="266" />
+            <state relative-caret-position="462">
+              <caret line="232" column="74" lean-forward="true" selection-start-line="232" selection-start-column="74" selection-end-line="232" selection-end-column="74" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -111,8 +111,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/test.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="33" column="56" selection-start-line="33" selection-start-column="56" selection-end-line="33" selection-end-column="56" />
+            <state relative-caret-position="201">
+              <caret line="30" column="85" lean-forward="true" selection-start-line="30" selection-start-column="85" selection-end-line="30" selection-end-column="85" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -123,8 +123,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/DBTest.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" column="35" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
+            <state relative-caret-position="476">
+              <caret line="28" column="18" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -157,9 +157,9 @@
         <option value="$PROJECT_DIR$/src/main/scala/MACDParamaterOptimization.scala" />
         <option value="$PROJECT_DIR$/build.sbt" />
         <option value="$PROJECT_DIR$/src/main/scala/OneFileOneParameter.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/test.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/DBTest.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/MACDParameterOptimization.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/test.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/multipleFile_test.scala" />
       </list>
     </option>
@@ -180,7 +180,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -216,6 +215,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -284,15 +284,15 @@
     <list>
       <item itemvalue="Application.DBTest" />
       <item itemvalue="Application.MACDParamaterOptimization" />
-      <item itemvalue="Application.test" />
-      <item itemvalue="Application.multipleFile_test" />
       <item itemvalue="Application.OneFileOneParameter" />
+      <item itemvalue="Application.multipleFile_test" />
+      <item itemvalue="Application.test" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.multipleFile_test" />
-        <item itemvalue="Application.DBTest" />
         <item itemvalue="Application.test" />
+        <item itemvalue="Application.DBTest" />
         <item itemvalue="Application.OneFileOneParameter" />
         <item itemvalue="Application.MACDParamaterOptimization" />
       </list>
@@ -354,8 +354,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49638554" visible="true" weight="0.16094421" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49638554" visible="true" weight="0.1695279" />
       <window_info id="Structure" order="1" sideWeight="0.5036145" side_tool="true" weight="0.22389127" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -370,7 +371,7 @@
       <window_info anchor="bottom" id="TODO" order="5" sideWeight="0.49713877" weight="0.32891566" />
       <window_info anchor="bottom" id="Version Control" order="6" />
       <window_info anchor="bottom" id="sbt-shell-toolwindow" order="7" sideWeight="0.49785408" weight="0.32891566" />
-      <window_info anchor="bottom" id="Run" order="8" sideWeight="0.51970184" side_tool="true" weight="0.62673265" />
+      <window_info active="true" anchor="bottom" id="Run" order="8" sideWeight="0.51970184" side_tool="true" visible="true" weight="0.119277105" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50572246" side_tool="true" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49713877" weight="0.32891566" />
       <window_info anchor="bottom" id="Build" order="11" sideWeight="0.49642345" weight="0.31188118" />
@@ -516,27 +517,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/test.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/DBTest.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
-          <caret line="33" column="56" selection-start-line="33" selection-start-column="56" selection-end-line="33" selection-end-column="56" />
+          <caret line="28" column="18" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/test.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="30" column="85" lean-forward="true" selection-start-line="30" selection-start-column="85" selection-end-line="30" selection-end-column="85" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/DBTest.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="35" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/multipleFile_test.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="266" selection-start-line="266" selection-end-line="266" />
+        <state relative-caret-position="462">
+          <caret line="232" column="74" lean-forward="true" selection-start-line="232" selection-start-column="74" selection-end-line="232" selection-end-column="74" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

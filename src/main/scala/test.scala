@@ -28,7 +28,7 @@ object test {
 
 
     //val sc = spark.sparkContext
-    val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/三下/Financial Management/Final Project Data"
+    val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/三下/Financial Management/FinalProject/Final Project Data/"
 
     val Schema = StructType(Array(
       StructField("Date", StringType, nullable = false),
