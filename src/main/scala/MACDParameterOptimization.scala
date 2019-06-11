@@ -94,9 +94,9 @@ object MACDParameterOptimization {
     }
     //Ema(index(0)).foreach(println)
 
-    for(x <- 2 to 50){
-      for(y <- x + 1 to 51){
-        for(z <- 2 to 50){
+    for(x <- 50 to 75){
+      for(y <- x + 1 to 76){
+        for(z <- 50 to 75){
 
           opIndex = x.toString + "," + y.toString + "," +z.toString
 

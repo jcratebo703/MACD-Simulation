@@ -62,6 +62,7 @@ object multipleFile_test extends App{
 
       val typeOneCrashFile = ArrayBuffer[String]()
       val typeTwoCrashFile = ArrayBuffer[String]()
+      val typeThreeCrashFile = ArrayBuffer[String]()
 
       val Ema = (index: Int, closeData: Map[Long, Double]) => {
         val alpha: Double = 2.0 / (index + 1.0)
@@ -189,12 +190,17 @@ object multipleFile_test extends App{
             //var sellNumb = stockNum * transRatio
 
             if(preHis < 0 && postHis > 0){ //negative to positive, buy
-              Buf = close
-              b += 1
-              buyPrice += close
-              //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
-              //asset -= spend
-              buyIndex += i+1
+              if(postHis/preHis > 1.1 && postHis/postHis > 0.9){
+                typeThreeCrashFile += trimFiles(terms)
+              }
+              else{
+                Buf = close
+                b += 1
+                buyPrice += close
+                //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
+                //asset -= spend
+                buyIndex += i+1
+              }
             }
             else if(preHis > 0 && postHis < 0){
               s += 1
@@ -286,4 +292,5 @@ object multipleFile_test extends App{
       }
       typeTwoCrashFile.foreach(x => println("\n File : " + x + " don't have any transaction!!"))
       typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
+      typeThreeCrashFile.foreach(x => println("\n File : " + x + "have certain close price error!!"))
 }

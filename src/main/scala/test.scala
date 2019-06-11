@@ -4,6 +4,7 @@ import org.apache.spark.sql.functions._
 import java.io.File
 import org.apache.spark.rdd._
 import scala.math._
+import scala.util.Random
 
 object test {
   def main(args: Array[String]): Unit = {
@@ -65,20 +66,10 @@ object test {
 
 //    val t = excelFiles(0).replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", "")
 //    println(t)
-//    dfs(1).show()
-//    dfs(2).show()
-//    dfs(3).show()
-//    dfs(4).show()
 
+    //random double array test
 
-
-//    ppdf.printSchema()
-//    ppdf.show(800)
-
-   // println(ppdf.count())
-
-
+    Random.nextDouble()
 
   }
-
 }

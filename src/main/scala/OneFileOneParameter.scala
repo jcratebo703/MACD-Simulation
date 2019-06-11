@@ -43,7 +43,7 @@ object OneFileOneParameter {
 
     val indexCloseMap = indexCloseRDD.collect().toMap
 
-    val index: Array[Int] = Array(47, 50, 29)
+    val index: Array[Int] = Array(74, 93, 92)
 
     val Ema = (index: Int, closeData: Map[Long, Double]) => {
       val alpha: Double = 2.0 / (index + 1.0)
