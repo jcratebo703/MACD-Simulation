@@ -94,6 +94,8 @@ object MACDParameterOptimization {
     }
     //Ema(index(0)).foreach(println)
 
+    var test: Int = 0
+
     for(x <- 50 to 75){
       for(y <- x + 1 to 76){
         for(z <- 50 to 75){
@@ -186,6 +188,7 @@ object MACDParameterOptimization {
 
             if(buyIndex.size <= 0){
               typeTwoCrashFile += opIndex
+              test += 1
               break()
             }
 
@@ -208,7 +211,7 @@ object MACDParameterOptimization {
 
             println("\n Simulation complete")
 
-            for(i <- 0 to 100) println(opIndex)
+            //for(i <- 0 to 100) println(opIndex)
 
             opMap += (opIndex -> ERate)
 
@@ -218,11 +221,12 @@ object MACDParameterOptimization {
     }
     opMap.foreach(println)
 
-    typeTwoCrashFile.foreach(x => println("\n Index : " + x + " don't have any transaction!!"))
+    typeTwoCrashFile.foreach(x => println("\n Index : " + x + " didn't have any transaction!!"))
     //typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
 
     println("\n Max: " + opMap.maxBy(_._2))
     println("\n Length: " + opMap.size)
+    println("Break parameter's number:" + test)
 
   }
 
