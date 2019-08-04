@@ -55,10 +55,12 @@ object multipleFile_test extends App{
       val excelFiles = dir.listFiles.sorted.map(f => f.toString)  // Array[String]
       excelFiles.foreach(println)
 
-      val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id()).filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
+      val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id())
+        .filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
       //val ppdf = dfs.reduce(_.union(_))
 
-      val trimFiles = excelFiles.map(x =>  x.replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", ""))
+      val trimFiles = excelFiles.map(x =>  x.replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "")
+        .replaceAll("^.{2}", ""))
 
       val typeOneCrashFile = ArrayBuffer[String]()
       val typeTwoCrashFile = ArrayBuffer[String]()

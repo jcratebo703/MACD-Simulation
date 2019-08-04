@@ -46,7 +46,7 @@ object OneFileOneParameter {
 
     val indexCloseMap = indexCloseRDD.collect().toMap
 
-    val index: Array[Int] = Array(12, 26, 9)
+    val index: Array[Int] = Array(24, 50, 18)
 
     val Ema = (index: Int, closeData: Map[Long, Double]) => {
       val alpha: Double = 2.0 / (index + 1.0)
@@ -92,12 +92,15 @@ object OneFileOneParameter {
     }
     //Ema(index(0)).foreach(println)
 
+
     val emaAryBuf1 = ArrayBuffer[Double]()
     emaAryBuf1 ++= Ema(index(0), indexCloseMap)
-    //println("index0 : "+emaAryBuf1)
+    //println("\nindex0 : "+emaAryBuf1)
+
     val emaAryBuf2 = ArrayBuffer[Double]()
     emaAryBuf2 ++= Ema(index(1), indexCloseMap)
-    //println("index1 : "+emaAryBuf2)
+    //println("\nindex1 : "+emaAryBuf2)
+
     println("\nCloseAryBuf SIZE :" + emaAryBuf1.size)
 
     val longestDay: Int = (3.45 * (index(1) + 1)).ceil.toInt
@@ -122,11 +125,14 @@ object OneFileOneParameter {
     var breakDaysMap: Map[String, Double] = Map()
     var maximumRateMap: Map[Double, Double] = Map()
     var expectationMap: Map[Double, Double] = Map()
+    var frequencyMap: Map[Double, Double] = Map()
+    val breakThresholdArybuf = ArrayBuffer[Double]()
 
     for(j <- 0 to 4) {
       val range: Double = 0.05
       val threshold = j * range
-      var Buf: Double = -1
+      var hold: Int = 0
+      var Buf: Double = 0
       val sellIndex = ArrayBuffer[Int]()
       val buyIndex = ArrayBuffer[Int]()
       val sellPrice = ArrayBuffer[Double]()
@@ -146,6 +152,7 @@ object OneFileOneParameter {
           if (preHis < 0 && postHis > 0) { //negative to positive, buy
             if(threshold == 0 || postHis >= threshold) {
               //println("TRUE")
+              hold = 1
               Buf = close
               b += 1
               buyPrice += close
@@ -155,21 +162,22 @@ object OneFileOneParameter {
             }
             else{
               //println("False")
-              breakDaysMap += (j.toString + "," + (i + 1).toString -> preHis)
+              breakDaysMap += (threshold.toString + "," + (i + 1).toString -> preHis)
               break()
             }
           }
           else if (preHis > 0 && postHis < 0) {
             //asset += indexCloseMap.get(i).toArray.mkString("").toDouble * sellNumb
             //stockNum -= sellNumb
-            if (Buf != -1) {
+            if (hold == 1) {
               s += 1
               sellIndex += i + 1
               priceDif += Buf - close
               returnRate += (close - Buf) / Buf
               sellPrice += close
 
-              Buf = -1
+              hold = 0
+              Buf = 0
             }
           }
         }
@@ -182,39 +190,62 @@ object OneFileOneParameter {
       }
 
       println("count:" + buyIndex.size)
+      frequencyMap += (threshold -> buyIndex.size)
 
-      val firstBuy: Double = indexCloseMap.get(buyIndex(0) + longestDay - 1).toArray.mkString("").toDouble
-      val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size - 1) + longestDay - 1).toArray.mkString("").toDouble
-      val ERate = returnRate.sum / returnRate.size
+      breakable{
+        if(buyIndex.size == 0){
+          breakThresholdArybuf += threshold
+          break()
+        }
+        val firstBuy: Double = indexCloseMap.get(buyIndex(0) + longestDay - 1).toArray.mkString("").toDouble
+        val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size - 1) + longestDay - 1).toArray.mkString("").toDouble
+        val ERate = returnRate.sum / returnRate.size
 
-      println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
-      println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
-      println("\n Sell Price: " + sellPrice)
-      println("\n Buy Price: " + buyPrice)
-      println("\n Rate of Return: " + returnRate)
-      println("\n Maximum: " + returnRate.max)
-      maximumRateMap += (threshold -> returnRate.max)
-      println("\n Minimum: " + returnRate.min)
-      println("\n Cumulative Return Rate: " + (lastSell - firstBuy) / firstBuy)
-      println("\n Expectation of Return Rate: " + ERate)
-      expectationMap += (threshold -> ERate)
-      println("\n b : " + b + "\n s : " + s)
+        val ERateAddOne = returnRate
+        ERateAddOne.transform(_+1)
+        var cumulativeRate: Double = 1
+        ERateAddOne.foreach(x => cumulativeRate *= x)
+        cumulativeRate -= 1
 
+        println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
+        println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
+        println("\n Sell Price: " + sellPrice)
+        println("\n Buy Price: " + buyPrice)
+        println("\n Rate of Return: " + returnRate)
+        println("\n Maximum: " + returnRate.max)
+        maximumRateMap += (threshold -> returnRate.max)
 
-      println("\nSimulation complete\n")
+        println("\n Minimum: " + returnRate.min)
+        println("\n Cumulative Return Rate: " + (lastSell - firstBuy) / firstBuy)
+        println("\n The Real Cumulative Return Rate: " + cumulativeRate)
+        println("\n Expectation of Return Rate: " + ERate)
+        expectationMap += (threshold -> ERate)
 
+        println("\n b : " + b + "\n s : " + s)
+
+        println("\nSimulation complete\n")
+      }
     }
 
-    breakDaysMap = ListMap(breakDaysMap.toSeq.sortWith(_._1 < _._1):_*)
-    println("\nBreak Days: ")
-    breakDaysMap.foreach(println)
+    //presentation of the fourth parameter
 
-    maximumRateMap = ListMap(maximumRateMap.toSeq.sortWith(_._2 > _._2):_*)
-    println("\nMaximum Rates: ")
-    maximumRateMap.foreach(println)
-
-    expectationMap = ListMap(expectationMap.toSeq.sortWith(_._2 > _._2):_*)
-    println("\nExpectations: ")
-    expectationMap.foreach(println)
+//    breakDaysMap = ListMap(breakDaysMap.toSeq.sortWith(_._1 < _._1):_*)
+//    println("\nBreak Days: ")
+//    breakDaysMap.foreach(println)
+//
+//    maximumRateMap = ListMap(maximumRateMap.toSeq.sortWith(_._2 > _._2):_*)
+//    println("\nMaximum Rates: ")
+//    maximumRateMap.foreach(println)
+//
+//    expectationMap = ListMap(expectationMap.toSeq.sortWith(_._2 > _._2):_*)
+//    println("\nExpectations: ")
+//    expectationMap.foreach(println)
+//
+//    frequencyMap = ListMap(frequencyMap.toSeq.sortWith(_._2 > _._2):_*)
+//    println("\nFrequency: ")
+//    frequencyMap.foreach(println)
+//
+//    println("\nThese thresholds have no transaction: ")
+//    breakThresholdArybuf.foreach(println)
   }
 }

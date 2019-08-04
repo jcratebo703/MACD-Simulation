@@ -2,62 +2,23 @@ import org.apache.spark.sql._
 
 import scala.collection.mutable._
 import scala.util.Random
-//import  scala.math._
-//import scala.util.Random
-//
-//val spark = SparkSession.builder()
-//  .appName("GitHub push counter")
-//  .master("local[*]")
-//  .getOrCreate()
-//
-//val sc = spark.sparkContext
-//
-////def readExcel(file: String): DataFrame = spark.sqlContext.read
-////  .format("com.crealytics.spark.excel")
-////  .option("location", file)
-////  .option("useHeader", "true")
-////  .option("treatEmptyValuesAsNulls", "true")
-////  .option("inferSchema", "true")
-////  .option("addColorColumns", "False")
-////  .load()
-////
-////val data = readExcel("path to your excel file")
-////
-////data.show(false)
-//
-//var index: Array[Int] = Array(12, 26, 9)
-//
-//index(0) = 1
-//
-//index.foreach(print)
-var randMin: Double = 2
-val randMax: Double = 100
-var d = Random.nextDouble()
-var rand: Double = randMin + (randMax - randMin) * d
-//
-d = Random.nextDouble()
-rand = randMin + (randMax - randMin) * d
-println(d)
-println(rand)
+import scala.collection.mutable.ArrayBuffer
 
-val rows: Int = 100
-val cols: Int = 3
+val longestDays: Array[Int] = Array(75, 76, 75)
 
-val a = Array.ofDim[Double](rows, cols)
-//println(a(0).size)
-//val sa = Array.fill(5)("Hi")
-for(i <- 0 until a.size){
-  d = Random.nextDouble()
-  rand = randMin + (randMax - randMin) * d
-  a(i)(0) = rand
-  randMin = rand
-  a(i)(1) = randMin + (randMax - randMin) * d
-  d = Random.nextDouble()
-  rand = randMin + (randMax - randMin) * d
-  a(i)(2) = rand
-  randMin = 2
-}
-a(99)
+val skipDays: Int = (3.45*(longestDays(1)+1)).ceil.toInt+(3.45*(longestDays(2)+1)).ceil.toInt-2//OMG
+println("skipDays: " + skipDays)
 
+println("test: " + (longestDays(1)+1)*3.45.ceil)
 
-"1,2,3".split(",").map(_.toDouble)
+var test0 = ArrayBuffer[Int]()
+for(i <- 1 to 5) test0 += i
+//test0.transform(_+1)
+
+test0.foreach(x => println("\n"+ x))
+
+var cumulativeRate: Double = 1
+test0.foreach(x => cumulativeRate *= x)
+
+println(cumulativeRate)
+
