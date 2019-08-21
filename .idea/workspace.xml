@@ -54,8 +54,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/multipleFile_test.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="952">
-              <caret line="62" column="33" selection-start-line="62" selection-start-column="33" selection-end-line="62" selection-end-column="33" />
+            <state relative-caret-position="864">
+              <caret line="58" column="34" selection-start-line="58" selection-start-column="34" selection-end-line="58" selection-end-column="34" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -66,8 +66,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/MACDParameterOptimization.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2601">
-              <caret line="116" column="65" selection-start-line="116" selection-start-column="65" selection-end-line="116" selection-end-column="65" />
+            <state relative-caret-position="206">
+              <caret line="82" column="70" selection-start-line="82" selection-start-column="70" selection-end-line="82" selection-end-column="70" />
+              <folding>
+                <element signature="e#0#47#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/OneFileOneParameter.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="769">
+              <caret line="127" column="40" lean-forward="true" selection-start-line="127" selection-start-column="40" selection-end-line="127" selection-end-column="40" />
               <folding>
                 <element signature="e#0#47#0" expanded="true" />
               </folding>
@@ -78,19 +90,19 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/test.sc">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
+            <state relative-caret-position="756">
+              <caret line="42" column="88" selection-start-line="42" selection-start-column="88" selection-end-line="42" selection-end-column="88" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/OneFileOneParameter.scala">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/MACD_test_0201.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="231" column="1" lean-forward="true" selection-start-line="231" selection-start-column="1" selection-end-line="231" selection-end-column="1" />
+            <state relative-caret-position="450">
+              <caret line="28" column="63" selection-start-line="28" selection-start-column="63" selection-end-line="28" selection-end-column="63" />
               <folding>
-                <element signature="e#0#47#0" expanded="true" />
+                <element signature="e#0#29#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -117,7 +129,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/main/scala/FirstApp.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/MACD_test_0201.scala" />
         <option value="$APPLICATION_CONFIG_DIR$/idea.properties" />
         <option value="$PROJECT_DIR$/src/main/scala/MACD_test_0602.sc" />
         <option value="$PROJECT_DIR$/src/main/scala/MACDParamaterOptimization.scala" />
@@ -128,6 +139,7 @@
         <option value="$PROJECT_DIR$/src/main/scala/optimizeGA.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/multipleFile_test.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/test.sc" />
+        <option value="$PROJECT_DIR$/src/main/scala/MACD_test_0201.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/OneFileOneParameter.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/MACDParameterOptimization.scala" />
       </list>
@@ -140,8 +152,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1440" />
-    <option name="height" value="900" />
+    <option name="x" value="-1920" />
+    <option name="y" value="-576" />
+    <option name="width" value="1920" />
+    <option name="height" value="1080" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -149,6 +163,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -183,7 +198,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -216,6 +230,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="MACD_test_0201" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="MACD_test_0201" />
+      <module name="SparkProject_01" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="OneFileOneParameter" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="OneFileOneParameter" />
       <module name="SparkProject_01" />
@@ -237,27 +258,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="test" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="test" />
-      <module name="SparkProject_01" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <list>
       <item itemvalue="Application.MACDParameterOptimization" />
+      <item itemvalue="Application.MACD_test_0201" />
       <item itemvalue="Application.OneFileOneParameter" />
       <item itemvalue="Application.multipleFile_test" />
       <item itemvalue="Application.optimizeGA" />
-      <item itemvalue="Application.test" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.MACDParameterOptimization" />
         <item itemvalue="Application.OneFileOneParameter" />
+        <item itemvalue="Application.MACD_test_0201" />
         <item itemvalue="Application.optimizeGA" />
         <item itemvalue="Application.multipleFile_test" />
-        <item itemvalue="Application.test" />
       </list>
     </recent_temporary>
   </component>
@@ -317,10 +331,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="-1920" y="-576" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49638554" visible="true" weight="0.13805436" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49638554" visible="true" weight="0.12034079" />
       <window_info id="Structure" order="1" sideWeight="0.5036145" side_tool="true" weight="0.22389127" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -335,11 +349,11 @@
       <window_info anchor="bottom" id="TODO" order="5" sideWeight="0.49713877" weight="0.32830188" />
       <window_info anchor="bottom" id="Version Control" order="6" />
       <window_info anchor="bottom" id="sbt-shell-toolwindow" order="7" sideWeight="0.49785408" weight="0.32891566" />
-      <window_info anchor="bottom" id="Run" order="8" sideWeight="0.51597446" side_tool="true" weight="0.77590364" />
+      <window_info anchor="bottom" id="Run" order="8" sideWeight="0.528754" side_tool="true" weight="0.34158415" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50572246" side_tool="true" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49713877" weight="0.32891566" />
       <window_info anchor="bottom" id="Build" order="11" sideWeight="0.49642345" weight="0.31188118" />
-      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.47284344" weight="0.3" />
+      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.471246" weight="0.4990099" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24964234" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -351,6 +365,38 @@
       <window_info anchor="right" id="Maven Projects" order="8" weight="0.3297568" />
       <window_info anchor="right" id="Maven" order="9" weight="0.3297568" />
     </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49638554" visible="true" weight="0.10383387" />
+      <window_info id="Structure" order="1" sideWeight="0.5036145" side_tool="true" weight="0.22389127" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info id="Capture Tool" order="4" />
+      <window_info id="UI Designer" order="5" />
+      <window_info id="Favorites" order="6" sideWeight="0.5036145" side_tool="true" weight="0.22389127" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Debug" order="2" sideWeight="0.48402557" weight="0.56237626" />
+      <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="5" sideWeight="0.49713877" weight="0.32830188" />
+      <window_info anchor="bottom" id="Version Control" order="6" />
+      <window_info anchor="bottom" id="sbt-shell-toolwindow" order="7" sideWeight="0.49785408" weight="0.32891566" />
+      <window_info active="true" anchor="bottom" id="Run" order="8" sideWeight="0.528754" side_tool="true" visible="true" weight="0.43762377" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50572246" side_tool="true" weight="0.4" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49713877" weight="0.32891566" />
+      <window_info anchor="bottom" id="Build" order="11" sideWeight="0.49642345" weight="0.31188118" />
+      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.471246" weight="0.4990099" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.24964234" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Capture Analysis" order="4" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="right" id="Palette&#9;" order="6" />
+      <window_info anchor="right" id="sbt" order="7" weight="0.3297568" />
+      <window_info anchor="right" id="Maven Projects" order="8" weight="0.3297568" />
+      <window_info anchor="right" id="Maven" order="9" weight="0.3297568" />
+    </layout-to-restore>
   </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>
@@ -443,16 +489,6 @@
     <entry file="file://$PROJECT_DIR$/project/build.properties">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/MACD_test_0201.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-645">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/DBTest.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
@@ -478,23 +514,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.sbt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="32" column="93" selection-start-line="32" selection-start-column="93" selection-end-line="32" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/multipleFile_test.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="952">
-          <caret line="62" column="33" selection-start-line="62" selection-start-column="33" selection-end-line="62" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/optimizeGA.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1197">
@@ -505,27 +524,54 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/OneFileOneParameter.scala">
+    <entry file="file://$PROJECT_DIR$/build.sbt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="231" column="1" lean-forward="true" selection-start-line="231" selection-start-column="1" selection-end-line="231" selection-end-column="1" />
+        <state relative-caret-position="576">
+          <caret line="32" column="93" selection-start-line="32" selection-start-column="93" selection-end-line="32" selection-end-column="93" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/multipleFile_test.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="864">
+          <caret line="58" column="34" selection-start-line="58" selection-start-column="34" selection-end-line="58" selection-end-column="34" />
           <folding>
-            <element signature="e#0#47#0" expanded="true" />
+            <element signature="e#0#19#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/test.sc">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
+        <state relative-caret-position="756">
+          <caret line="42" column="88" selection-start-line="42" selection-start-column="88" selection-end-line="42" selection-end-column="88" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/MACD_test_0201.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="28" column="63" selection-start-line="28" selection-start-column="63" selection-end-line="28" selection-end-column="63" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/OneFileOneParameter.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="769">
+          <caret line="127" column="40" lean-forward="true" selection-start-line="127" selection-start-column="40" selection-end-line="127" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/MACDParameterOptimization.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2601">
-          <caret line="116" column="65" selection-start-line="116" selection-start-column="65" selection-end-line="116" selection-end-column="65" />
+        <state relative-caret-position="206">
+          <caret line="82" column="70" selection-start-line="82" selection-start-column="70" selection-end-line="82" selection-end-column="70" />
           <folding>
             <element signature="e#0#47#0" expanded="true" />
           </folding>

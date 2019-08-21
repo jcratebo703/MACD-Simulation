@@ -1,6 +1,7 @@
 import org.apache.spark.sql.{Row, SparkSession}
 import scala.util.control.Breaks._
 import scala.collection.mutable.ArrayBuffer
+import org.apache.spark.sql.functions.unix_timestamp
 import breeze.linalg._
 import breeze.numerics._
 
@@ -19,10 +20,16 @@ object MACDParameterOptimization extends App{
     .getOrCreate()
 
   val sc = spark.sparkContext
-  val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
+  val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/畢專/CSV/2330 台積電.csv")
 
-  val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
+  //val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
+  val pattern = "yyyy/MM/dd"
+
+  val dfInverse = df
+    .withColumn("timestampCol", unix_timestamp(df("_c0"), pattern).cast("timestamp"))
+    .orderBy("timestampCol")
   dfInverse.show()
+
   val rows: Array[Row] = dfInverse.collect()
 
   val closeArr: Array[Double] = rows.map(_.getString(4)).map(_.toDouble)
@@ -156,14 +163,12 @@ object MACDParameterOptimization extends App{
         sizeAry += macdAryBuf.size
 
         breakable{
-
           //            if(macdAryBuf.size <= 0){
           //              typeOneCrashFile += excelFiles(terms)
           //              break()
           //            }
 
-
-          /* Simulation */
+          /* Simulation start */
 
           var Buf: Double = -1
           var hold: Int = 0

@@ -4,6 +4,8 @@ import scala.util.control.Breaks._
 import scala.collection.mutable.ArrayBuffer
 import breeze.linalg._
 import breeze.numerics._
+import org.apache.spark.sql.functions.unix_timestamp
+
 
 import scala.collection.immutable.ListMap
 
@@ -16,10 +18,17 @@ object OneFileOneParameter {
       .getOrCreate()
 
     val sc = spark.sparkContext
-    val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
+    val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/畢專/CSV/2330 台積電.csv")
 
-    val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
+    //val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
+
+    val pattern = "yyyy/MM/dd"
+
+    val dfInverse = df
+      .withColumn("timestampCol", unix_timestamp(df("_c0"), pattern).cast("timestamp"))
+      .orderBy("timestampCol")
     dfInverse.show()
+
     val rows: Array[Row] = dfInverse.collect()
 
     val closeArr: Array[Double] = rows.map(_.getString(4)).map(_.toDouble)
@@ -46,7 +55,7 @@ object OneFileOneParameter {
 
     val indexCloseMap = indexCloseRDD.collect().toMap
 
-    val index: Array[Int] = Array(24, 50, 18)
+    val index: Array[Int] = Array(12, 26, 9)
 
     val Ema = (index: Int, closeData: Map[Long, Double]) => {
       val alpha: Double = 2.0 / (index + 1.0)
@@ -109,7 +118,7 @@ object OneFileOneParameter {
     for(i <- longestDay-1 to emaAryBuf1.size-1){
       difAryBuf += emaAryBuf1(i) - emaAryBuf2(i)
     }
-    //println("\nDIF: " + difAryBuf)
+    println("\nDIF: " + difAryBuf)
     println("\n DIF length: " + difAryBuf.size)
 
 
@@ -117,7 +126,7 @@ object OneFileOneParameter {
 
     val macdAryBuf = ArrayBuffer[Double]()
     macdAryBuf ++= Ema(index(2), difMap)
-    //println("\nMACD: " + macdAryBuf)
+    println("\nMACD: " + macdAryBuf)
     println( "\n MACD length: " + macdAryBuf.size)
 
     /* Simulation */
