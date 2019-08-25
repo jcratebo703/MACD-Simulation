@@ -176,92 +176,62 @@ object MACDParameterOptimization extends App{
 
           /* Simulation start */
 
+          var breakDaysMap: Map[String, Double] = Map()
+          var maximumRateMap: Map[Double, Double] = Map()
+          var expectationMap: Map[Double, Double] = Map()
+          var frequencyMap: Map[Double, Double] = Map()
+          val breakThresholdArybuf = ArrayBuffer[Double]()
 
-          var Buf: Double = -1
-          var hold: Int = 0
-          val sellIndex = ArrayBuffer[Int]()
-          val buyIndex = ArrayBuffer[Int]()
-          val sellPrice = ArrayBuffer[Double]()
-          val buyPrice = ArrayBuffer[Double]()
-          val priceDif = ArrayBuffer[Double]()
-          val returnRate = ArrayBuffer[Double]()
-          var b, s: Int = 0
+          for(j <- 0 to 4) {
 
-          for(i <- 0 to macdAryBuf.size-2){
-            val preHis =  difAryBuf(i) - macdAryBuf(i)
-            val postHis = difAryBuf(i+1) - macdAryBuf(i+1)
-            val close: Double = indexCloseMap.get(i+1+longestDay-1).toArray.mkString("").toDouble
-            //var spend = asset * transRatio
-            //var sellNumb = stockNum * transRatio
+            val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 
-            if(preHis < 0 && postHis > 0){ //negative to positive, buy
-              hold = 1
-              Buf = close
-              b += 1
-              buyPrice += close
-              //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
-              //asset -= spend
-              buyIndex += i+1
-            }
-            else if(preHis > 0 && postHis < 0){ //sell
-              //asset += indexCloseMap.get(i).toArray.mkString("").toDouble * sellNumb
-              //stockNum -= sellNumb
-              if(hold == 1){
-                s += 1
-                sellIndex += i+1
-                priceDif += Buf - close
-                returnRate += (close-Buf)/Buf
-                sellPrice += close
+            trans.transSimul(j)
+            trans.transFreqVerify()
 
-                hold = 0
-                Buf = -1
+            val threshold = trans.threshold
+            //val sellIndex = trans.sellIndex
+            val buyIndex = trans.buyIndex
+
+            println("count:" + buyIndex.size)
+            frequencyMap += (threshold -> buyIndex.size)
+
+            //Threshold has no transaction will break()
+            breakable{
+              if(buyIndex.isEmpty){
+                breakThresholdArybuf += threshold
+                typeTwoCrashFile += opIndex
+                test += 1
+                break()
               }
+
+              val returnRate = trans.returnRate
+
+              val CRate = trans.calculateCum()
+              val ERate = trans.calculateExp()
+              val holdAndWait = trans.calculateHoldNWait()
+
+              maximumRateMap += (threshold -> returnRate.max)
+              expectationMap += (threshold -> ERate)
+
+              breakDaysMap = breakDaysMap ++ trans.breakDaysMap
+
+              opMap += (opIndex -> ERate)
+              transTime += buyIndex.size
+
+              println("\n Cumulative Return: " + CRate)
+              println("\n Expected Return: " + ERate)
+              println("\n Hold & Wait: " + holdAndWait)
+              trans.resultsPrint()
+
+              //foooooooor
+              for(i <- 0 to 100) println(opIndex + ", j")
+
+
             }
           }
 
-          if(sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size){
-            buyIndex.remove(buyIndex.size-1)
-            buyPrice.remove(buyPrice.size-1)
-            //println("\n error occur!!!!!")
-          }
 
-          if(buyIndex.size <= 0){
-            typeTwoCrashFile += opIndex
-            test += 1
-            break()
-          }
-
-          println("count:" +buyIndex.size)
-          val firstBuy: Double = indexCloseMap.get(buyIndex(0)+longestDay-1).toArray.mkString("").toDouble
-          val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size-1)+longestDay-1).toArray.mkString("").toDouble
-          val ERate = returnRate.sum/returnRate.size
-
-          val ERateAddOne = returnRate
-          ERateAddOne.transform(_+1)
-          var cumulativeRate: Double = 1
-          ERateAddOne.foreach(x => cumulativeRate *= x)
-          cumulativeRate -= 1
-
-          println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
-          println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
-          println("\n Sell Price: " + sellPrice)
-          println("\n Buy Price: " + buyPrice)
-          println("\n Rate of Return: " + returnRate)
-          println("\n Maximum: " + returnRate.max)
-          println("\n Minimum: " + returnRate.min)
-          println("\n Cumulative Return Rate: " + (lastSell-firstBuy)/firstBuy)
-          println("\n The Real Cumulative Return Rate: " + cumulativeRate)
-          println("\n Expectation of Return Rate: " + ERate)
-
-          println("\n b : " + b + "\n s : " + s)
-
-          println("\n Simulation complete")
-
-          //foooooooor
-          for(i <- 0 to 100) println(opIndex)
-
-          opMap += (opIndex -> ERate)
-          transTime += buyIndex.size
 
           //database connection
 //          try {
