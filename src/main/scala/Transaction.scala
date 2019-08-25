@@ -60,15 +60,16 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
     }
   }
 
-  def trasFreqVerify(x: Unit): Unit ={
+  def transFreqVerify(x: Unit): Unit ={
     if (sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size) {
       buyIndex.remove(buyIndex.size - 1)
       buyPrice.remove(buyPrice.size - 1)
-      //println("\n error occur!!!!!")
+      println("\n last transaction was buy")
     }
   }
 
   def resultsPrint(x: Unit): Unit ={
+    println("\n")
     println("\n Sell Index: " + sellIndex + "\n Sell counts: " + sellIndex.size)
     println("\n Buy Index: " + buyIndex + "\n Buy counts: " + buyIndex.size)
     println("\n Sell Price: " + sellPrice)
@@ -79,6 +80,26 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
     println("\n b : " + b + "\n s : " + s)
 
     println("\nSimulation complete\n")
+  }
+
+  def calculateCum(x: Unit): Double ={
+    val ERateAddOne = returnRate
+    ERateAddOne.transform(_+1)
+    var cumulativeRate: Double = 1
+    ERateAddOne.foreach(x => cumulativeRate *= x)
+    cumulativeRate -= 1
+    cumulativeRate
+  }
+
+  def calculateExp(x: Unit): Double ={
+    val ERate = returnRate.sum / returnRate.size
+    ERate
+  }
+
+  def calculateHoldNWait(x: Unit):Double ={
+    val firstBuy: Double = indexCloseMap.get(buyIndex(0) + longestDay - 1).toArray.mkString("").toDouble
+    val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size - 1) + longestDay - 1).toArray.mkString("").toDouble
+    (lastSell - firstBuy) / firstBuy
   }
 
 }

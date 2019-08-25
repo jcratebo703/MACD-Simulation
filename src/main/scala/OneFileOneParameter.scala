@@ -142,41 +142,37 @@ object OneFileOneParameter {
       val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 
       trans.transSimul(j)
-      trans.trasFreqVerify()
+      trans.transFreqVerify()
 
       val threshold = trans.threshold
-      val sellIndex = trans.sellIndex
+      //val sellIndex = trans.sellIndex
       val buyIndex = trans.buyIndex
 
-      println("count:" + trans.buyIndex.size)
-      frequencyMap += (trans.threshold -> trans.buyIndex.size)
+      println("count:" + buyIndex.size)
+      frequencyMap += (threshold -> buyIndex.size)
 
+      //Threshold has no transaction will break()
       breakable{
-        if(trans.buyIndex.size == 0){
-          breakThresholdArybuf += trans.threshold
+        if(buyIndex.size == 0){
+          breakThresholdArybuf += threshold
           break()
         }
 
         val returnRate = trans.returnRate
-        val firstBuy: Double = indexCloseMap.get(buyIndex(0) + longestDay - 1).toArray.mkString("").toDouble
-        val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size - 1) + longestDay - 1).toArray.mkString("").toDouble
-        val ERate = returnRate.sum / returnRate.size
 
-        val ERateAddOne = returnRate
-        ERateAddOne.transform(_+1)
-        var cumulativeRate: Double = 1
-        ERateAddOne.foreach(x => cumulativeRate *= x)
-        cumulativeRate -= 1
+        val CRate = trans.calculateCum()
+        val ERate = trans.calculateExp()
+        val holdAndWait = trans.calculateHoldNWait()
 
         maximumRateMap += (threshold -> returnRate.max)
-
-        println("\n Cumulative Return Rate: " + (lastSell - firstBuy) / firstBuy)
-        println("\n The Real Cumulative Return Rate: " + cumulativeRate)
-        println("\n Expectation of Return Rate: " + ERate)
         expectationMap += (threshold -> ERate)
 
         breakDaysMap = breakDaysMap ++ trans.breakDaysMap
 
+
+        println("\n Cumulative Return: " + CRate)
+        println("\n Expected Return: " + ERate)
+        println("\n Hold & Wait: " + holdAndWait)
         trans.resultsPrint()
       }
     }
