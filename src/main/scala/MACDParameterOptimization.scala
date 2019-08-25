@@ -14,6 +14,7 @@ object MACDParameterOptimization extends App{
   val password = "jcratebo703"
   var connection: Connection = _
 
+  //spark session
   val spark = SparkSession.builder()
     .appName("GitHub push counter")
     .master("local[*]")
@@ -22,6 +23,7 @@ object MACDParameterOptimization extends App{
   val sc = spark.sparkContext
   val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/畢專/CSV/2330 台積電.csv")
 
+  //order data
   //val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
   val pattern = "yyyy/MM/dd"
 
@@ -30,6 +32,7 @@ object MACDParameterOptimization extends App{
     .orderBy("timestampCol")
   dfInverse.show()
 
+  //df process
   val rows: Array[Row] = dfInverse.collect()
 
   val closeArr: Array[Double] = rows.map(_.getString(4)).map(_.toDouble)
@@ -63,6 +66,7 @@ object MACDParameterOptimization extends App{
   //val typeOneCrashFile = ArrayBuffer[String]()
   val typeTwoCrashFile = ArrayBuffer[String]()
 
+  //EMA function
   val Ema = (index: Int, closeData: Map[Long, Double]) => {
     val alpha: Double = 2.0 / (index + 1.0)
     val Nday = (3.45 * (index + 1)).ceil.toInt
@@ -108,7 +112,7 @@ object MACDParameterOptimization extends App{
   //Ema(index(0)).foreach(println)
 
   var test: Int = 0
-  val longestDays: Array[Int] = Array(50, 51, 50)
+  val longestDays: Array[Int] = Array(25, 26, 25)
   val longest3rdNDay = (3.45*(longestDays(2)+1)).ceil.toInt
 
   val skipDays: Int = (3.45*(longestDays(1)+1)).ceil.toInt+ longest3rdNDay -2//OMG
@@ -117,6 +121,7 @@ object MACDParameterOptimization extends App{
   val sizeAry = ArrayBuffer[Int]()
   val transTime = ArrayBuffer[Int]()
 
+  //Start para's OPT
   for(x <- longestDays(0) to 1 by -1){
     for(y <- longestDays(1) to x + 1 by -1){
       for(z <- longestDays(2) to 1 by -1){
@@ -168,7 +173,9 @@ object MACDParameterOptimization extends App{
           //              break()
           //            }
 
+
           /* Simulation start */
+
 
           var Buf: Double = -1
           var hold: Int = 0
@@ -250,39 +257,43 @@ object MACDParameterOptimization extends App{
 
           println("\n Simulation complete")
 
+          //foooooooor
           for(i <- 0 to 100) println(opIndex)
 
           opMap += (opIndex -> ERate)
           transTime += buyIndex.size
 
-          try {
-            Class.forName(driver)
-            connection = DriverManager.getConnection(url, username, password)
-            //val statement = connection.createStatement
-            //    val rs = statement.executeQuery("SELECT Name, TranFrequency FROM scalaTest.cop")
-            //    while (rs.next) {
-            //      val name = rs.getString("Name")
-            //      val freq = rs.getInt("TranFrequency")
-            //      println("name = %s, freq = %d".format(name,freq))
-            //    }
+          //database connection
+//          try {
+//            Class.forName(driver)
+//            connection = DriverManager.getConnection(url, username, password)
+//            //val statement = connection.createStatement
+//            //    val rs = statement.executeQuery("SELECT Name, TranFrequency FROM scalaTest.cop")
+//            //    while (rs.next) {
+//            //      val name = rs.getString("Name")
+//            //      val freq = rs.getInt("TranFrequency")
+//            //      println("name = %s, freq = %d".format(name,freq))
+//            //    }
+//
+//            val insertSQL = "INSERT INTO scalaTest.parameterOPT (parameters, ERate, CRate, Frequency)" +
+//              " VALUES(?, ?, ?, ?)"
+//
+//            val prep: PreparedStatement = connection.prepareStatement(insertSQL)
+//
+//            prep.setString(1, opIndex)
+//            prep.setDouble(2, ERate)
+//            prep.setDouble(3, cumulativeRate)
+//            prep.setInt(4, buyIndex.size)
+//            prep.execute()
+//
+//            prep.close()
+//
+//          } catch {
+//            case e: Exception => e.printStackTrace
+//          }
+//          connection.close
 
-            val insertSQL = "INSERT INTO scalaTest.parameterOPT (parameters, ERate, CRate, Frequency)" +
-              " VALUES(?, ?, ?, ?)"
 
-            val prep: PreparedStatement = connection.prepareStatement(insertSQL)
-
-            prep.setString(1, opIndex)
-            prep.setDouble(2, ERate)
-            prep.setDouble(3, cumulativeRate)
-            prep.setInt(4, buyIndex.size)
-            prep.execute()
-
-            prep.close()
-
-          } catch {
-            case e: Exception => e.printStackTrace
-          }
-          connection.close
 
         }
       }
