@@ -2,18 +2,9 @@ import org.apache.spark.sql.{Row, SparkSession}
 import scala.util.control.Breaks._
 import scala.collection.mutable.ArrayBuffer
 import org.apache.spark.sql.functions.unix_timestamp
-import breeze.linalg._
 import breeze.numerics._
 
-import java.sql.{Connection, DriverManager, PreparedStatement}
-
 object MACDParameterOptimization extends App{
-  val url = "jdbc:mysql://localhost:3306/mysql"
-  val driver = "com.mysql.jdbc.Driver"
-  val username = "root"
-  val password = "jcratebo703"
-  var connection: Connection = _
-
   //spark session
   val spark = SparkSession.builder()
     .appName("GitHub push counter")
@@ -112,7 +103,7 @@ object MACDParameterOptimization extends App{
   //Ema(index(0)).foreach(println)
 
   var test: Int = 0
-  val longestDays: Array[Int] = Array(25, 26, 25)
+  val longestDays: Array[Int] = Array(50, 51, 50)
   val longest3rdNDay = (3.45*(longestDays(2)+1)).ceil.toInt
 
   val skipDays: Int = (3.45*(longestDays(1)+1)).ceil.toInt+ longest3rdNDay -2//OMG
@@ -192,9 +183,10 @@ object MACDParameterOptimization extends App{
             val threshold = trans.threshold
             //val sellIndex = trans.sellIndex
             val buyIndex = trans.buyIndex
+            val transFreq = buyIndex.size
 
-            println("count:" + buyIndex.size)
-            frequencyMap += (threshold -> buyIndex.size)
+            println("count:" + transFreq)
+            frequencyMap += (threshold -> transFreq)
 
             //Threshold has no transaction will break()
             breakable{
@@ -217,7 +209,7 @@ object MACDParameterOptimization extends App{
               breakDaysMap = breakDaysMap ++ trans.breakDaysMap
 
               opMap += (opIndex -> ERate)
-              transTime += buyIndex.size
+              transTime += transFreq
 
               println("\n Cumulative Return: " + CRate)
               println("\n Expected Return: " + ERate)
@@ -225,45 +217,23 @@ object MACDParameterOptimization extends App{
               trans.resultsPrint()
 
               //foooooooor
-              for(i <- 0 to 100) println(opIndex + ", j")
+              for(i <- 0 to 100) println(opIndex + "," + j)
 
+              //database connection
+              val dbConnect = new DatabaseConnection(opIndex, ERate, CRate, transFreq)
+              val dbNames = Array("parameterOPT", "paraWithOneTimesThreshold" ,"paraWithTwoTimesThreshold",
+                "paraWithThreeTimesThreshold", "paraWithFourTimesThreshold")
+
+              j match {
+                case 0 => dbConnect.writeDB(dbNames(0))
+                case 1 => dbConnect.writeDB(dbNames(1))
+                case 2 => dbConnect.writeDB(dbNames(2))
+                case 3 => dbConnect.writeDB(dbNames(3))
+                case 4 => dbConnect.writeDB(dbNames(4))
+              }
 
             }
           }
-
-
-
-          //database connection
-//          try {
-//            Class.forName(driver)
-//            connection = DriverManager.getConnection(url, username, password)
-//            //val statement = connection.createStatement
-//            //    val rs = statement.executeQuery("SELECT Name, TranFrequency FROM scalaTest.cop")
-//            //    while (rs.next) {
-//            //      val name = rs.getString("Name")
-//            //      val freq = rs.getInt("TranFrequency")
-//            //      println("name = %s, freq = %d".format(name,freq))
-//            //    }
-//
-//            val insertSQL = "INSERT INTO scalaTest.parameterOPT (parameters, ERate, CRate, Frequency)" +
-//              " VALUES(?, ?, ?, ?)"
-//
-//            val prep: PreparedStatement = connection.prepareStatement(insertSQL)
-//
-//            prep.setString(1, opIndex)
-//            prep.setDouble(2, ERate)
-//            prep.setDouble(3, cumulativeRate)
-//            prep.setInt(4, buyIndex.size)
-//            prep.execute()
-//
-//            prep.close()
-//
-//          } catch {
-//            case e: Exception => e.printStackTrace
-//          }
-//          connection.close
-
-
 
         }
       }

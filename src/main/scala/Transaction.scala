@@ -49,7 +49,8 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
             s += 1
             sellIndex += i + 1
             priceDif += Buf - close
-            returnRate += (close - Buf) / Buf
+            val eR = (close - Buf) / Buf
+            returnRate += eR
             sellPrice += close
 
             hold = 0
@@ -83,7 +84,7 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
   }
 
   def calculateCum(x: Unit): Double ={
-    val ERateAddOne = returnRate
+    val ERateAddOne = returnRate.clone() // call by address warning !!
     ERateAddOne.transform(_+1)
     var cumulativeRate: Double = 1
     ERateAddOne.foreach(x => cumulativeRate *= x)
