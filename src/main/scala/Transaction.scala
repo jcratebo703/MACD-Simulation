@@ -1,3 +1,5 @@
+import breeze.numerics.{pow, sqrt}
+
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Breaks.{break, breakable}
 
@@ -101,6 +103,14 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
     val firstBuy: Double = indexCloseMap.get(buyIndex(0) + longestDay - 1).toArray.mkString("").toDouble
     val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size - 1) + longestDay - 1).toArray.mkString("").toDouble
     (lastSell - firstBuy) / firstBuy
+  }
+
+  def calculateStd(x: Unit):Double ={
+    val count = returnRate.size
+    val mean = returnRate.sum/count
+    val variance = returnRate.map(x => pow(x - mean, 2))
+    val stddev = sqrt(variance.sum / (count - 1))
+    stddev
   }
 
 }

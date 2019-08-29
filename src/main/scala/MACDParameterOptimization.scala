@@ -173,7 +173,7 @@ object MACDParameterOptimization extends App{
           var frequencyMap: Map[Double, Double] = Map()
           val breakThresholdArybuf = ArrayBuffer[Double]()
 
-          for(j <- 0 to 4) {
+          for(j <- 0 to 1) {
 
             val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 
@@ -202,6 +202,7 @@ object MACDParameterOptimization extends App{
               val CRate = trans.calculateCum()
               val ERate = trans.calculateExp()
               val holdAndWait = trans.calculateHoldNWait()
+              val STD = trans.calculateStd()
 
               maximumRateMap += (threshold -> returnRate.max)
               expectationMap += (threshold -> ERate)
@@ -220,7 +221,7 @@ object MACDParameterOptimization extends App{
               for(i <- 0 to 100) println(opIndex + "," + j)
 
               //database connection
-              val dbConnect = new DatabaseConnection(opIndex, ERate, CRate, transFreq)
+              val dbConnect = new DatabaseConnection(opIndex, ERate, CRate, transFreq, STD)
               val dbNames = Array("parameterOPT", "paraWithOneTimesThreshold" ,"paraWithTwoTimesThreshold",
                 "paraWithThreeTimesThreshold", "paraWithFourTimesThreshold")
 

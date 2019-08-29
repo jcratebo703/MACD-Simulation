@@ -1,6 +1,6 @@
 import java.sql.{Connection, DriverManager, PreparedStatement}
 
-class DatabaseConnection(val opIndex: String, val ERate: Double, val CRate: Double, val transFreq: Int) {
+class DatabaseConnection(val opIndex: String, val ERate: Double, val CRate: Double, val transFreq: Int, val STD: Double) {
   val url = "jdbc:mysql://localhost:3306/mysql"
   val driver = "com.mysql.jdbc.Driver"
   val username = "root"
@@ -19,8 +19,8 @@ class DatabaseConnection(val opIndex: String, val ERate: Double, val CRate: Doub
       //      println("name = %s, freq = %d".format(name,freq))
       //    }
 
-      val insertSQL = "INSERT INTO scalaTest."+ databaseName + " (parameters, ERate, CRate, Frequency)" +
-        " VALUES(?, ?, ?, ?)"
+      val insertSQL = "INSERT INTO scalaTest."+ databaseName + " (parameters, ERate, CRate, Frequency, STD)" +
+        " VALUES(?, ?, ?, ?, ?)"
 
       val prep: PreparedStatement = connection.prepareStatement(insertSQL)
 
@@ -28,6 +28,7 @@ class DatabaseConnection(val opIndex: String, val ERate: Double, val CRate: Doub
       prep.setDouble(2, ERate)
       prep.setDouble(3, CRate)
       prep.setInt(4, transFreq)
+      prep.setDouble(5, STD)
       prep.execute()
 
       prep.close()
