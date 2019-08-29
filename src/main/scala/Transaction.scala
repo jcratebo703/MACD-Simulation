@@ -8,12 +8,12 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
   var threshold: Double = 0
   var hold: Int = 0
   var Buf: Double = 0
-  val sellIndex = ArrayBuffer[Int]()
-  val buyIndex = ArrayBuffer[Int]()
-  val sellPrice = ArrayBuffer[Double]()
-  val buyPrice = ArrayBuffer[Double]()
-  val priceDif = ArrayBuffer[Double]()
-  val returnRate = ArrayBuffer[Double]()
+  private val sellIndex = ArrayBuffer[Int]()
+  private val buyIndex = ArrayBuffer[Int]()
+  private val sellPrice = ArrayBuffer[Double]()
+  private val buyPrice = ArrayBuffer[Double]()
+  private val priceDif = ArrayBuffer[Double]()
+  private val returnRate = ArrayBuffer[Double]()
   var b, s: Int = 0
   var breakDaysMap: Map[String, Double] = Map()
 
@@ -105,12 +105,31 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
     (lastSell - firstBuy) / firstBuy
   }
 
-  def calculateStd(x: Unit):Double ={
+  def calculateStd(x: Unit): Double ={
     val count = returnRate.size
     val mean = returnRate.sum/count
     val variance = returnRate.map(x => pow(x - mean, 2))
     val stddev = sqrt(variance.sum / (count - 1))
     stddev
+  }
+
+  def testEmptyTrans(x: Unit): Boolean ={
+    buyIndex.isEmpty
+  }
+
+  def transCount(x: Unit): Int ={
+    buyIndex.size
+  }
+
+  def getMaxMinReturn(x: Int): Double ={
+    var y: Double = 0
+    if(x == 0){
+      y = returnRate.max
+    }
+    else if (x == 0){
+      y = returnRate.min
+    }
+    y
   }
 
 }

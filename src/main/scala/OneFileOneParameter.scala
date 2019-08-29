@@ -145,15 +145,16 @@ object OneFileOneParameter {
       trans.transFreqVerify()
 
       val threshold = trans.threshold
+      val hasTrans = trans.testEmptyTrans()
       //val sellIndex = trans.sellIndex
-      val buyIndex = trans.buyIndex
+      val transCounts = trans.transCount()
 
-      println("count:" + buyIndex.size)
-      frequencyMap += (threshold -> buyIndex.size)
+      println("count:" + transCounts)
+      frequencyMap += (threshold -> transCounts)
 
       //Threshold has no transaction will break()
       breakable{
-        if(buyIndex.size == 0){
+        if(hasTrans){
           breakThresholdArybuf += threshold
           break()
         }

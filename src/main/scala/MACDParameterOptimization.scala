@@ -182,35 +182,33 @@ object MACDParameterOptimization extends App{
 
             val threshold = trans.threshold
             //val sellIndex = trans.sellIndex
-            val buyIndex = trans.buyIndex
-            val transFreq = buyIndex.size
+            val hasTrans = trans.testEmptyTrans()
+            val transCounts = trans.transCount()
 
-            println("count:" + transFreq)
-            frequencyMap += (threshold -> transFreq)
+            println("count:" + transCounts)
+            frequencyMap += (threshold -> transCounts)
 
             //Threshold has no transaction will break()
             breakable{
-              if(buyIndex.isEmpty){
+              if(hasTrans){
                 breakThresholdArybuf += threshold
                 typeTwoCrashFile += opIndex
                 test += 1
                 break()
               }
 
-              val returnRate = trans.returnRate
-
               val CRate = trans.calculateCum()
               val ERate = trans.calculateExp()
               val holdAndWait = trans.calculateHoldNWait()
               val STD = trans.calculateStd()
 
-              maximumRateMap += (threshold -> returnRate.max)
+              maximumRateMap += (threshold -> trans.getMaxMinReturn(0))
               expectationMap += (threshold -> ERate)
 
               breakDaysMap = breakDaysMap ++ trans.breakDaysMap
 
               opMap += (opIndex -> ERate)
-              transTime += transFreq
+              transTime += transCounts
 
               println("\n Cumulative Return: " + CRate)
               println("\n Expected Return: " + ERate)
@@ -221,7 +219,7 @@ object MACDParameterOptimization extends App{
               for(i <- 0 to 100) println(opIndex + "," + j)
 
               //database connection
-              val dbConnect = new DatabaseConnection(opIndex, ERate, CRate, transFreq, STD)
+              val dbConnect = new DatabaseConnection(opIndex, ERate, CRate, transCounts, STD)
               val dbNames = Array("parameterOPT", "paraWithOneTimesThreshold" ,"paraWithTwoTimesThreshold",
                 "paraWithThreeTimesThreshold", "paraWithFourTimesThreshold")
 
