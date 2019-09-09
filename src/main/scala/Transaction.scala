@@ -4,7 +4,8 @@ import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Breaks.{break, breakable}
 
 class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffer[Double], val indexCloseMap: Map[Long, Double], val longestDay: Int){
-  val range: Double = 0.05
+  //val range: Double = 0.05
+  val thresholdAry: Array[Double] = Array(0, 0.01, 0.05)
   var threshold: Double = 0
   var hold: Int = 0
   var Buf: Double = 0
@@ -17,8 +18,8 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
   var b, s: Int = 0
   var breakDaysMap: Map[String, Double] = Map()
 
-  def transSimul(thrTimes: Int): Unit = {
-    this.threshold = thrTimes * range
+  def transSimulation(thrTimes: Int): Unit = {
+    this.threshold = thresholdAry(thrTimes)
 
     for (i <- 0 to macdAryBuf.size - 2) {
       breakable{
@@ -28,7 +29,7 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
         val close: Double = indexCloseMap.get(i + 1 + longestDay - 1).toArray.mkString("").toDouble
 
         if (preHis < 0 && postHis > 0) { //negative to positive, buy
-          if(threshold == 0 || postHis >= threshold) {
+          if(difAryBuf(i + 1) > macdAryBuf(i + 1) * (1 + threshold)) { //first version: difAryBuf(i + 1) > (macdAryBuf(i + 1) + threshold)
             //println("TRUE")
             hold = 1
             Buf = close
@@ -101,7 +102,8 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
 
   def calculateHoldNWait(x: Unit):Double ={
     val firstBuy: Double = indexCloseMap.get(buyIndex(0) + longestDay - 1).toArray.mkString("").toDouble
-    val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size - 1) + longestDay - 1).toArray.mkString("").toDouble
+    val lastSell: Double = indexCloseMap.get(sellIndex(sellIndex.size - 1) + longestDay - 1).toArray.mkString("")
+      .toDouble
     (lastSell - firstBuy) / firstBuy
   }
 
@@ -109,8 +111,8 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
     val count = returnRate.size
     val mean = returnRate.sum/count
     val variance = returnRate.map(x => pow(x - mean, 2))
-    val stddev = sqrt(variance.sum / (count - 1))
-    stddev
+    val stdDev = sqrt(variance.sum / (count - 1))
+    stdDev
   }
 
   def testEmptyTrans(x: Unit): Boolean ={

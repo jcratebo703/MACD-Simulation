@@ -12,7 +12,7 @@ object MACDParameterOptimization extends App{
     .getOrCreate()
 
   val sc = spark.sparkContext
-  val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/畢專/CSV/2330 台積電.csv")
+  val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/FYP/CSV/2330 台積電.csv")
 
   //order data
   //val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
@@ -173,11 +173,11 @@ object MACDParameterOptimization extends App{
           var frequencyMap: Map[Double, Double] = Map()
           val breakThresholdArybuf = ArrayBuffer[Double]()
 
-          for(j <- 0 to 1) {
+          for(j <- 0 to 2) {
 
             val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 
-            trans.transSimul(j)
+            trans.transSimulation(j)
             trans.transFreqVerify()
 
             val threshold = trans.threshold

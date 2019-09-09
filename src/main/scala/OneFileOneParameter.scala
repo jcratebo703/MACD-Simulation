@@ -18,7 +18,7 @@ object OneFileOneParameter {
       .getOrCreate()
 
     val sc = spark.sparkContext
-    val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/畢專/CSV/2330 台積電.csv")
+    val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/FYP/CSV/2330 台積電.csv")
 
     //val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
 
@@ -57,6 +57,7 @@ object OneFileOneParameter {
 
     val index: Array[Int] = Array(12, 26, 9)
 
+    //Ema function
     val Ema = (index: Int, closeData: Map[Long, Double]) => {
       val alpha: Double = 2.0 / (index + 1.0)
       val Nday = (3.45 * (index + 1)).ceil.toInt
@@ -137,11 +138,11 @@ object OneFileOneParameter {
     var frequencyMap: Map[Double, Double] = Map()
     val breakThresholdArybuf = ArrayBuffer[Double]()
 
-    for(j <- 0 to 1) {
+    for(j <- 0 to 2) {
 
       val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 
-      trans.transSimul(j)
+      trans.transSimulation(j)
       trans.transFreqVerify()
 
       val threshold = trans.threshold
@@ -159,13 +160,11 @@ object OneFileOneParameter {
           break()
         }
 
-        val returnRate = trans.returnRate
-
         val CRate = trans.calculateCum()
         val ERate = trans.calculateExp()
         val holdAndWait = trans.calculateHoldNWait()
 
-        maximumRateMap += (threshold -> returnRate.max)
+        maximumRateMap += (threshold -> trans.getMaxMinReturn(0))
         expectationMap += (threshold -> ERate)
 
         breakDaysMap = breakDaysMap ++ trans.breakDaysMap
