@@ -115,7 +115,7 @@ object MACDParameterOptimization extends App{
   //Start para's OPT
   for(x <- longestDays(0) to 1 by -1){
     for(y <- longestDays(1) to x + 1 by -1){
-      for(z <- longestDays(2) to 1 by -1){
+      for(z <- longestDays(2) to 2 by -1){
 
         opIndex = x.toString + "," + y.toString + "," +z.toString
 
@@ -173,7 +173,7 @@ object MACDParameterOptimization extends App{
           var frequencyMap: Map[Double, Double] = Map()
           val breakThresholdArybuf = ArrayBuffer[Double]()
 
-          for(j <- 0 to 2) {
+          for(j <- 0 to 4) {
 
             val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 

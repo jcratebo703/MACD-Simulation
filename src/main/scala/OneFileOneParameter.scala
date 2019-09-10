@@ -138,7 +138,7 @@ object OneFileOneParameter {
     var frequencyMap: Map[Double, Double] = Map()
     val breakThresholdArybuf = ArrayBuffer[Double]()
 
-    for(j <- 0 to 2) {
+    for(j <- 0 to 4) {
 
       val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 

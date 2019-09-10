@@ -5,7 +5,7 @@ import scala.util.control.Breaks.{break, breakable}
 
 class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffer[Double], val indexCloseMap: Map[Long, Double], val longestDay: Int){
   //val range: Double = 0.05
-  val thresholdAry: Array[Double] = Array(0, 0.01, 0.05)
+  val thresholdAry: Array[Double] = Array(0, 0.05, 0.1, 0.15, 0.2)
   var threshold: Double = 0
   var hold: Int = 0
   var Buf: Double = 0
