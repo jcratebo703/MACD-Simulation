@@ -103,7 +103,7 @@ object MACDParameterOptimization extends App{
   //Ema(index(0)).foreach(println)
 
   var test: Int = 0
-  val longestDays: Array[Int] = Array(50, 51, 50)
+  val longestDays: Array[Int] = Array(30, 51, 50)
   val longest3rdNDay = (3.45*(longestDays(2)+1)).ceil.toInt
 
   val skipDays: Int = (3.45*(longestDays(1)+1)).ceil.toInt+ longest3rdNDay -2//OMG
@@ -113,8 +113,8 @@ object MACDParameterOptimization extends App{
   val transTime = ArrayBuffer[Int]()
 
   //Start para's OPT
-  for(x <- longestDays(0) to 1 by -1){
-    for(y <- longestDays(1) to x + 1 by -1){
+  for(x <- longestDays(0) to 5 by -1){
+    for(y <- longestDays(1) to x + 5 by -1){
       for(z <- longestDays(2) to 2 by -1){
 
         opIndex = x.toString + "," + y.toString + "," +z.toString

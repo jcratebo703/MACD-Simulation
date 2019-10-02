@@ -34,9 +34,9 @@ class DatabaseConnection(val opIndex: String, val ERate: Double, val CRate: Doub
       prep.close()
 
     } catch {
-      case e: Exception => e.printStackTrace
+      case e: Exception => e.printStackTrace()
     }
-    connection.close
+    connection.close()
   }
 
 }

@@ -3,7 +3,8 @@ import breeze.numerics.{pow, sqrt}
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Breaks.{break, breakable}
 
-class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffer[Double], val indexCloseMap: Map[Long, Double], val longestDay: Int){
+class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffer[Double]
+                  , val indexCloseMap: Map[Long, Double], val longestDay: Int){
   //val range: Double = 0.05
   val thresholdAry: Array[Double] = Array(0, 0.05, 0.1, 0.15, 0.2)
   var threshold: Double = 0
@@ -128,7 +129,7 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
     if(x == 0){
       y = returnRate.max
     }
-    else if (x == 0){
+    else if (x == 1){
       y = returnRate.min
     }
     y
