@@ -262,13 +262,6 @@ object multipleFile_test extends App{
           try {
             Class.forName(driver)
             connection = DriverManager.getConnection(url, username, password)
-            //val statement = connection.createStatement
-            //    val rs = statement.executeQuery("SELECT Name, TranFrequency FROM scalaTest.cop")
-            //    while (rs.next) {
-            //      val name = rs.getString("Name")
-            //      val freq = rs.getInt("TranFrequency")
-            //      println("name = %s, freq = %d".format(name,freq))
-            //    }
 
             val insertSQL = "INSERT INTO scalaTest.cop (Name, TranFrequency, CRate, ERate, STDDEV, Probability, max, min) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
 
