@@ -29,7 +29,7 @@ object test {
 
 
     //val sc = spark.sparkContext
-    val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/三下/Financial Management/FinalProject/Final Project Data/"
+    val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/FYP/Taiwan50Index/"
 
     val Schema = StructType(Array(
       StructField("Date", StringType, nullable = false),
@@ -61,8 +61,11 @@ object test {
     val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id()).filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
    // val ppdf = dfs.reduce(_.union(_))
 
-    val trimFiles = excelFiles.map(x =>  x.replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", ""))
+   val trimFiles = excelFiles.map(x =>  x.replaceAll("^.{67}", "").replaceAll("[a-z]|[0-9]|/|\\.| ", ""))
+//    val trimFiles = excelFiles.map(x =>  x.replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", ""))
    trimFiles.foreach(println)
+
+    dfs.foreach(x => x.show())
 
 //    val t = excelFiles(0).replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", "")
 //    println(t)

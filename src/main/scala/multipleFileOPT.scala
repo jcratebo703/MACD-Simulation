@@ -1,9 +1,8 @@
 import java.io.File
-import java.sql.{Connection, DriverManager, PreparedStatement}
+import java.sql.Connection
 
 import breeze.numerics._
-import multipleFile_test.{Ema, connection, dfs, driver, password, sc, trimFiles, typeOneCrashFile, typeThreeCrashFile, typeTwoCrashFile, url, username}
-import org.apache.spark.sql.functions.{col, monotonically_increasing_id, unix_timestamp}
+import org.apache.spark.sql.functions.{col, monotonically_increasing_id}
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
@@ -26,7 +25,7 @@ object multipleFileOPT extends App{
   val sc = spark.sparkContext
   //      val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
   //      val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
-  val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/三下/Financial Management/FinalProject/Final Project Data/"
+  val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/FYP/Taiwan50Index/"
 
   val Schema = StructType(Array(
     StructField("Date", StringType, nullable = false),
@@ -59,8 +58,8 @@ object multipleFileOPT extends App{
     .filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
   //val ppdf = dfs.reduce(_.union(_))
 
-  val trimFiles = excelFiles.map(x =>  x.replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "")
-    .replaceAll("^.{2}", ""))
+  val trimFiles = excelFiles.map(x =>  x.replaceAll("^.{67}", "")
+    .replaceAll("[a-z]|[0-9]|/|\\.| ", ""))
 
   val typeOneCrashFile = ArrayBuffer[String]()
   val typeTwoCrashFile = ArrayBuffer[String]()
@@ -76,18 +75,18 @@ object multipleFileOPT extends App{
     var P: Double = 0
     val emaCloseAryBuf = ArrayBuffer[Double]()
 
-    for(j <- 0 to closeData.size-1){
+    for(j <- 0 until closeData.size){
 
       if(j - (Nday-1) >= 0) {
 
         if(j == Nday-1){
-          for (i <- 0 to Nday-1) {
+          for (i <- 0 until Nday) {
             // emaAryBuffer += indexCloseRDD.lookup(i).toArray.mkString("").toDouble
             emaAryBuffer += closeData.get(i).toArray.mkString("").toDouble
             //var buf: Double = 0
           }
 
-          for(k <- 0 to emaAryBuffer.length-1){
+          for(k <- emaAryBuffer.indices){
             buf += emaAryBuffer((k-(emaAryBuffer.length-1)).abs) * pow(1 - alpha, k)
           }
           emaCloseAryBuf += buf * alpha
@@ -111,7 +110,7 @@ object multipleFileOPT extends App{
   //Ema(index(0)).foreach(println)
 
   //iterate files
-  for(terms <- 0 to dfs.size-1){
+  for(terms <- dfs.indices){
 
     val rows: Array[Row] = dfs(terms).collect()
 
@@ -127,7 +126,7 @@ object multipleFileOPT extends App{
     val closeWithIndex = closeRDD.zipWithIndex()
     val indexCloseRDD = closeWithIndex.map{case (k, v) => (v, k)}
 
-    val indexCloseMap = indexCloseRDD.collect().toMap
+    val indexCloseMap = indexCloseRDD.collect().toMap//DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     val index: Array[Int] = Array(12, 26, 9)
     var opIndex: String = ""
@@ -169,7 +168,7 @@ object multipleFileOPT extends App{
           val longestDay: Int = (3.45 * (index(1) + 1)).ceil.toInt
 
           val difAryBuf = ArrayBuffer[Double]()
-          for(i <- longestDay-1 to emaAryBuf1.size-1){
+          for(i <- longestDay - 1 until emaAryBuf1.size){
             difAryBuf += emaAryBuf1(i) - emaAryBuf2(i)
           }
           //println("\nDIF: " + difAryBuf)
@@ -192,11 +191,10 @@ object multipleFileOPT extends App{
           sizeAry += macdAryBuf.size
 
           breakable{
-            //            if(macdAryBuf.size <= 0){
-            //              typeOneCrashFile += excelFiles(terms)
-            //              break()
-            //            }
-
+            if(macdAryBuf.size <= 0){
+              typeOneCrashFile += trimFiles(terms)
+              break()
+            }
 
             /* Simulation start */
 
@@ -249,7 +247,7 @@ object multipleFileOPT extends App{
                 trans.resultsPrint()
 
                 //foooooooor
-                for(i <- 0 to 100) println(opIndex + "," + j)
+                for(_ <- 0 to 100) println(opIndex + "," + j)
 
                 //database connection
                 val dbConnect = new DatabaseConnection(opIndex, ERate, CRate, transCounts, STD)
@@ -272,103 +270,11 @@ object multipleFileOPT extends App{
       }
     }
 
-    val emaAryBuf1 = ArrayBuffer[Double]()
-    emaAryBuf1 ++= Ema(index(0), indexCloseMap)
-    //println("index0 : "+emaAryBuf1)
-    val emaAryBuf2 = ArrayBuffer[Double]()
-    emaAryBuf2 ++= Ema(index(1), indexCloseMap)
-    //println("index1 : "+emaAryBuf2)
-    println("\nCloseAryBuf SIZE :" + emaAryBuf1.size)
-
-    val longestDay: Int = (3.45 * (index(1) + 1)).ceil.toInt
-
-    val difAryBuf = ArrayBuffer[Double]()
-    for(i <- longestDay-1 to emaAryBuf1.size-1){
-      difAryBuf += emaAryBuf1(i) - emaAryBuf2(i)
-    }
-    //println("\nDIF: " + difAryBuf)
-    println("\n DIF length: " + difAryBuf.size)
-
-
-    val difMap = sc.parallelize(difAryBuf).zipWithIndex.map{case (k, v) => (v, k)}.collect().toMap
-
-    val macdAryBuf = ArrayBuffer[Double]()
-    macdAryBuf ++= Ema(index(2), difMap)
-    //println("\nMACD: " + macdAryBuf)
-    println( "\n MACD length: " + macdAryBuf.size)
-
-    breakable{
-
-      if(macdAryBuf.size <= 0){
-        typeOneCrashFile += trimFiles(terms)
-        break()
-      }
-
-      /* Simulation */
-
-
-      var Buf: Double = -1
-      val sellIndex = ArrayBuffer[Int]()
-      val buyIndex = ArrayBuffer[Int]()
-      val sellPrice = ArrayBuffer[Double]()
-      val buyPrice = ArrayBuffer[Double]()
-      val priceDif = ArrayBuffer[Double]()
-      val returnRate = ArrayBuffer[Double]()
-      var b, s: Int = 0
-
-      for(i <- 0 to macdAryBuf.size-2){
-        val preHis =  difAryBuf(i) - macdAryBuf(i)
-        val postHis = difAryBuf(i+1) - macdAryBuf(i+1)
-        val close: Double = indexCloseMap.get(i+longestDay).toArray.mkString("").toDouble //i+1+longestDay-1
-        //var spend = asset * transRatio
-        //var sellNumb = stockNum * transRatio
-
-        if(preHis < 0 && postHis > 0){ //negative to positive, buy
-          if(postHis/preHis > 1.1 && postHis/postHis > 0.9){
-            typeThreeCrashFile += trimFiles(terms)
-          }
-          else{
-            Buf = close
-            b += 1
-            buyPrice += close
-            //stockNum += spend / indexCloseMap.get(i).toArray.mkString("").toDouble
-            //asset -= spend
-            buyIndex += i+1
-          }
-        }
-        else if(preHis > 0 && postHis < 0){
-          s += 1
-          //asset += indexCloseMap.get(i).toArray.mkString("").toDouble * sellNumb
-          //stockNum -= sellNumb
-          if(Buf != -1){
-            sellIndex += i+1
-            priceDif += Buf - close
-            returnRate += (close-Buf)/Buf
-            sellPrice += close
-
-            Buf = -1
-          }
-        }
-      }
-
-      if(sellIndex.size != buyIndex.size || sellIndex.size != returnRate.size){
-        buyIndex.remove(buyIndex.size-1)
-        buyPrice.remove(buyPrice.size-1)
-        //println("\n error occur!!!!!")
-      }
-
-      if(buyIndex.size <= 0){
-        typeTwoCrashFile += trimFiles(terms)
-        break()
-      }
-
-
-
-    }
     opMap.foreach(println)
 
-    typeTwoCrashFile.foreach(x => println("\n Index : " + x + " didn't have any transaction!!"))
-    //typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
+    typeTwoCrashFile.foreach(x => println("\n File : " + x + " don't have any transaction!!"))
+    typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
+    typeThreeCrashFile.foreach(x => println("\n File : " + x + "have certain close price error!!"))
 
     println("\n Max: " + opMap.maxBy(_._2))
     println("\n Length: " + opMap.size)
