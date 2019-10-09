@@ -1,5 +1,5 @@
 import java.io.File
-import java.sql.Connection
+import java.sql.{Connection, DriverManager, PreparedStatement}
 
 import breeze.numerics._
 import org.apache.spark.sql.functions.{col, monotonically_increasing_id}
@@ -60,6 +60,8 @@ object multipleFileOPT extends App{
 
   val trimFiles = excelFiles.map(x =>  x.replaceAll("^.{67}", "")
     .replaceAll("[a-z]|[0-9]|/|\\.| ", ""))
+
+  //dfs & Names Done
 
   val typeOneCrashFile = ArrayBuffer[String]()
   val typeTwoCrashFile = ArrayBuffer[String]()
@@ -126,7 +128,10 @@ object multipleFileOPT extends App{
     val closeWithIndex = closeRDD.zipWithIndex()
     val indexCloseRDD = closeWithIndex.map{case (k, v) => (v, k)}
 
-    val indexCloseMap = indexCloseRDD.collect().toMap//DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    val indexCloseMap = indexCloseRDD.collect().toMap
+    //indexCloseRDD.foreach(println)
+
+    // Close Map Done
 
     val index: Array[Int] = Array(12, 26, 9)
     var opIndex: String = ""
@@ -143,6 +148,12 @@ object multipleFileOPT extends App{
 
     val sizeAry = ArrayBuffer[Int]()
     val transTime = ArrayBuffer[Int]()
+
+    //multiple files analysis
+    var originalExp: Double = 0
+    var originalCum: Double = 0
+    var singleFileExpMap: Map[String, Double] = Map()
+    var singleFileCumMap: Map[String, Double] = Map()
 
     //Start para's OPT
     for(x <- longestDays(0) to 5 by -1){
@@ -178,7 +189,8 @@ object multipleFileOPT extends App{
 
           val macdAryBuf = ArrayBuffer[Double]()
           macdAryBuf ++= Ema(index(2), difMap)
-          //println("\nMACD: " + macdAryBuf)
+          println("\nName: " + trimFiles(terms))
+          println("\nMACD: " + macdAryBuf)
           println( "\n MACD length: " + macdAryBuf.size)
 
 
@@ -192,7 +204,7 @@ object multipleFileOPT extends App{
 
           breakable{
             if(macdAryBuf.size <= 0){
-              typeOneCrashFile += trimFiles(terms)
+              typeOneCrashFile += trimFiles(terms)+": "+opIndex
               break()
             }
 
@@ -223,7 +235,7 @@ object multipleFileOPT extends App{
               breakable{
                 if(hasTrans){
                   breakThresholdArybuf += threshold
-                  typeTwoCrashFile += opIndex
+                  typeTwoCrashFile += trimFiles(terms)+ ": " +opIndex
                   test += 1
                   break()
                 }
@@ -232,6 +244,16 @@ object multipleFileOPT extends App{
                 val ERate = trans.calculateExp()
                 val holdAndWait = trans.calculateHoldNWait()
                 val STD = trans.calculateStd()
+
+                //multiple Files analysis
+
+                singleFileExpMap += (opIndex -> ERate)
+                singleFileCumMap += (opIndex -> CRate)
+
+                if(x == 12 && y == 26 && z == 9){
+                  originalExp = ERate
+                  originalCum = CRate
+                }
 
                 maximumRateMap += (threshold -> trans.getMaxMinReturn(0))
                 expectationMap += (threshold -> ERate)
@@ -248,20 +270,6 @@ object multipleFileOPT extends App{
 
                 //foooooooor
                 for(_ <- 0 to 100) println(opIndex + "," + j)
-
-                //database connection
-                val dbConnect = new DatabaseConnection(opIndex, ERate, CRate, transCounts, STD)
-                val dbNames = Array("parameterOPT", "paraWithOneTimesThreshold" ,"paraWithTwoTimesThreshold",
-                  "paraWithThreeTimesThreshold", "paraWithFourTimesThreshold")
-
-                j match {
-                  case 0 => dbConnect.writeDB(dbNames(0))
-                  case 1 => dbConnect.writeDB(dbNames(1))
-                  case 2 => dbConnect.writeDB(dbNames(2))
-                  case 3 => dbConnect.writeDB(dbNames(3))
-                  case 4 => dbConnect.writeDB(dbNames(4))
-                }
-
               }
             }
 
@@ -269,6 +277,40 @@ object multipleFileOPT extends App{
         }
       }
     }
+
+    val maxExpectation: Double = singleFileExpMap.valuesIterator.max
+    val maxCumulation: Double = singleFileCumMap.valuesIterator.max
+
+    try {
+      Class.forName(driver)
+      connection = DriverManager.getConnection(url, username, password)
+      //val statement = connection.createStatement
+      //    val rs = statement.executeQuery("SELECT Name, TranFrequency FROM scalaTest.cop")
+      //    while (rs.next) {
+      //      val name = rs.getString("Name")
+      //      val freq = rs.getInt("TranFrequency")
+      //      println("name = %s, freq = %d".format(name,freq))
+      //    }
+
+      val insertSQL = "INSERT INTO scalaTest."+ "finalFYP" + " (parameters, ERate, CRate, Frequency, STD)" +
+        " VALUES(?, ?, ?, ?, ?)"
+
+      val prep: PreparedStatement = connection.prepareStatement(insertSQL)
+
+      prep.setString(1, opIndex)
+      prep.setDouble(2, ERate)
+      prep.setDouble(3, CRate)
+      prep.setInt(4, transFreq)
+      prep.setDouble(5, STD)
+      prep.execute()
+
+      prep.close()
+
+    } catch {
+      case e: Exception => e.printStackTrace()
+    }
+    connection.close()
+
 
     opMap.foreach(println)
 

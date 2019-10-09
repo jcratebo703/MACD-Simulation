@@ -192,7 +192,7 @@ object multipleFile_test extends App{
             //var sellNumb = stockNum * transRatio
 
             if(preHis < 0 && postHis > 0){ //negative to positive, buy
-              if(postHis/preHis > 1.1 && postHis/postHis > 0.9){
+              if(postHis/preHis > 1.1 && postHis/postHis > 0.9){// should use close price
                 typeThreeCrashFile += trimFiles(terms)
               }
               else{

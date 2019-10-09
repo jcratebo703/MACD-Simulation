@@ -19,6 +19,7 @@ class Transaction(val macdAryBuf: ArrayBuffer[Double], val difAryBuf: ArrayBuffe
   var b, s: Int = 0
   var breakDaysMap: Map[String, Double] = Map()
 
+
   def transSimulation(thrTimes: Int): Unit = {
     this.threshold = thresholdAry(thrTimes)
 
