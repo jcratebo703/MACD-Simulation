@@ -152,8 +152,10 @@ object multipleFileOPT extends App{
     //multiple files analysis
     var originalExp: Double = 0
     var originalCum: Double = 0
+    var originalSTD: Double = 0
     var singleFileExpMap: Map[String, Double] = Map()
     var singleFileCumMap: Map[String, Double] = Map()
+    var singleFileSTDMap: Map[String, Double] = Map()
 
     //Start para's OPT
     for(x <- longestDays(0) to 5 by -1){
@@ -249,10 +251,12 @@ object multipleFileOPT extends App{
 
                 singleFileExpMap += (opIndex -> ERate)
                 singleFileCumMap += (opIndex -> CRate)
+                singleFileSTDMap += (opIndex -> STD)
 
                 if(x == 12 && y == 26 && z == 9){
                   originalExp = ERate
                   originalCum = CRate
+                  originalSTD = STD
                 }
 
                 maximumRateMap += (threshold -> trans.getMaxMinReturn(0))
@@ -271,45 +275,54 @@ object multipleFileOPT extends App{
                 //foooooooor
                 for(_ <- 0 to 100) println(opIndex + "," + j)
               }
+
+              val maxExpectation: Double = singleFileExpMap.valuesIterator.max
+              val maxCumulation: Double = singleFileCumMap.valuesIterator.max
+              val maxExpectationKey: String = singleFileExpMap.filter(_._2 == maxExpectation).keys.mkString
+              val maxCumulationKey: String = singleFileExpMap.filter(_._2 == maxCumulation).keys.mkString
+              val MaxExpSTD: Double = singleFileSTDMap.filter(_._1 == maxExpectationKey).values.mkString.toDouble
+
+              try {
+                Class.forName(driver)
+                connection = DriverManager.getConnection(url, username, password)
+                //val statement = connection.createStatement
+                //    val rs = statement.executeQuery("SELECT Name, TranFrequency FROM scalaTest.cop")
+                //    while (rs.next) {
+                //      val name = rs.getString("Name")
+                //      val freq = rs.getInt("TranFrequency")
+                //      println("name = %s, freq = %d".format(name,freq))
+                //    }
+
+                val insertSQL = "INSERT INTO scalaTest."+ "finalFYP" + " (Name, Threshold, MaxExpParameter, MaxExpectation" +
+                  ", OriginalExpectation, MaxExpSTD, MaxCumParameter, MaxCumulation, OriginalCumulation, OriginalSTD)" +
+                  " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
+                val prep: PreparedStatement = connection.prepareStatement(insertSQL)
+
+                prep.setString(1, trimFiles(terms))
+                prep.setString(2, (j*0.05).toString)
+                prep.setString(3, maxExpectationKey)
+                prep.setDouble(4, maxExpectation)
+                prep.setDouble(5, originalExp)
+                prep.setDouble(6, MaxExpSTD)
+                prep.setString(7, maxCumulationKey)
+                prep.setDouble(8, maxCumulation)
+                prep.setDouble(9, originalCum)
+                prep.setDouble(10, originalSTD)
+                prep.execute()
+
+                prep.close()
+
+              } catch {
+                case e: Exception => e.printStackTrace()
+              }
+              connection.close()
             }
 
           }
         }
       }
     }
-
-    val maxExpectation: Double = singleFileExpMap.valuesIterator.max
-    val maxCumulation: Double = singleFileCumMap.valuesIterator.max
-
-    try {
-      Class.forName(driver)
-      connection = DriverManager.getConnection(url, username, password)
-      //val statement = connection.createStatement
-      //    val rs = statement.executeQuery("SELECT Name, TranFrequency FROM scalaTest.cop")
-      //    while (rs.next) {
-      //      val name = rs.getString("Name")
-      //      val freq = rs.getInt("TranFrequency")
-      //      println("name = %s, freq = %d".format(name,freq))
-      //    }
-
-      val insertSQL = "INSERT INTO scalaTest."+ "finalFYP" + " (parameters, ERate, CRate, Frequency, STD)" +
-        " VALUES(?, ?, ?, ?, ?)"
-
-      val prep: PreparedStatement = connection.prepareStatement(insertSQL)
-
-      prep.setString(1, opIndex)
-      prep.setDouble(2, ERate)
-      prep.setDouble(3, CRate)
-      prep.setInt(4, transFreq)
-      prep.setDouble(5, STD)
-      prep.execute()
-
-      prep.close()
-
-    } catch {
-      case e: Exception => e.printStackTrace()
-    }
-    connection.close()
 
 
     opMap.foreach(println)
