@@ -18,7 +18,7 @@ object OneFileOneParameter {
       .getOrCreate()
 
     val sc = spark.sparkContext
-    val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/FYP/CSV/2330 台積電.csv")
+    val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/FYP/CSV/1. 2301 光寶科.csv")
 
     //val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
 
@@ -31,7 +31,7 @@ object OneFileOneParameter {
 
     val rows: Array[Row] = dfInverse.collect()
 
-    val closeArr: Array[Double] = rows.map(_.getString(4)).map(_.toDouble)
+    val closeArr: Array[Double] = rows.map(_.getString(1)).map(_.toDouble)
     val closeRDD = sc.parallelize(closeArr)
 
     val closeSum: Double = closeRDD.sum()
@@ -55,7 +55,10 @@ object OneFileOneParameter {
 
     val indexCloseMap = indexCloseRDD.collect().toMap
 
-    val index: Array[Int] = Array(12, 26, 9)
+    val indexCloseMap01 = ListMap(indexCloseMap.toSeq.sortWith(_._1 < _._1):_*)
+    indexCloseMap01.foreach(println)
+
+    val index: Array[Int] = Array(5, 11, 7)
 
     //Ema function
     val Ema = (index: Int, closeData: Map[Long, Double]) => {
@@ -129,6 +132,16 @@ object OneFileOneParameter {
     macdAryBuf ++= Ema(index(2), difMap)
     println("\nMACD: " + macdAryBuf)
     println( "\n MACD length: " + macdAryBuf.size)
+
+    val longestDays: Array[Int] = Array(30, 51, 50)
+    val longest3rdNDay = (3.45*(longestDays(2)+1)).ceil.toInt
+
+    val skipDays: Int = (3.45*(longestDays(1)+1)).ceil.toInt+ longest3rdNDay -2
+
+    val shortestTransDays: Int = emaAryBuf1.size-skipDays
+    val daysWillBeTrimmed = difAryBuf.size - shortestTransDays
+    macdAryBuf.remove(0, daysWillBeTrimmed)
+    difAryBuf.remove(0, daysWillBeTrimmed)
 
     /* Simulation */
 

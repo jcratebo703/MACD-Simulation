@@ -80,7 +80,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.multipleFileOPT">
+  <component name="RunManager" selected="Application.OneFileOneParameter">
     <configuration name="MACDParameterOptimization" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="MACDParameterOptimization" />
       <module name="SparkProject_01" />
@@ -125,11 +125,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.OneFileOneParameter" />
         <item itemvalue="Application.multipleFileOPT" />
         <item itemvalue="Application.test" />
         <item itemvalue="Application.multipleFile_test" />
         <item itemvalue="Application.MACDParameterOptimization" />
-        <item itemvalue="Application.OneFileOneParameter" />
       </list>
     </recent_temporary>
   </component>
@@ -192,6 +192,22 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/multipleFileOPT.scala</url>
+          <line>326</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/multipleFileOPT.scala</url>
+          <line>262</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
