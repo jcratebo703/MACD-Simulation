@@ -15,20 +15,8 @@ object test {
       .getOrCreate()
 
     val sc = spark.sparkContext
-//    val dfp = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/畢專/CSV/tejdb_20190129160802.csv" )
-//    val withIDs = dfp.withColumn("id", monotonically_increasing_id())
-//    val cleanedDf = withIDs.filter(withIDs("id") >= 3)
-//    val df = cleanedDf.orderBy("_c0")
-//
-//    df.show()
-//    df.filter(df("_c1") =!= "").show()
-//    val columns = df.schema.fields.filter(x => x.dataType == IntegerType || x.dataType == DoubleType)
-//
-//    df.select(columns.map(x => df(x.name)): _*).show()
-
-
-
-    //val sc = spark.sparkContext
+    //      val df = spark.read.csv("/Users/caichengyun/Documents/codingBuf/tejdb_20190129160802 copy.csv")
+    //      val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
     val path: String = "/Users/caichengyun/Documents/User/CGU/Subject/FYP/Taiwan50Index/"
 
     val Schema = StructType(Array(
@@ -40,39 +28,33 @@ object test {
       StructField("id", IntegerType, nullable = false)))
 
     def readExcel(file: String): DataFrame = spark.read
-          .format("com.crealytics.spark.excel")
-          .schema(Schema) // Optional, default: Either inferred schema, or all columns are Strings
-    //      .option("dataAddress", "'My Sheet'!B3:C35") // Optional, default: "A1"
-          .option("useHeader", "false") // Required
-          .option("treatEmptyValuesAsNulls", "false") // Optional, default: true
-          .option("inferSchema", "false") // Optional, default: false
-          .option("addColorColumns", "false") // Optional, default: false
-          .option("timestampFormat", "yyyy/mm/dd HH:mm:ss") // Optional, default: yyyy-mm-dd hh:mm:ss[.fffffffff]
-    //      .option("maxRowsInMemory", 20) // Optional, default None. If set, uses a streaming reader which can help with big files
-    //      .option("excerptSize", 10) // Optional, default: 10. If set and if schema inferred, number of rows to infer schema from
-    //      .option("workbookPassword", "pass") // Optional, default None. Requires unlimited strength JCE for older JVMs
-    //      .option("location", path)
-          .load(file)
+      .format("com.crealytics.spark.excel")
+      .schema(Schema) // Optional, default: Either inferred schema, or all columns are Strings
+      //      .option("dataAddress", "'My Sheet'!B3:C35") // Optional, default: "A1"
+      .option("useHeader", "false") // Required
+      .option("treatEmptyValuesAsNulls", "false") // Optional, default: true
+      .option("inferSchema", "false") // Optional, default: false
+      .option("addColorColumns", "false") // Optional, default: false
+      .option("timestampFormat", "yyyy/mm/dd HH:mm:ss") // Optional, default: yyyy-mm-dd hh:mm:ss[.fffffffff]
+      //      .option("maxRowsInMemory", 20) // Optional, default None. If set, uses a streaming reader which can help with big files
+      //      .option("excerptSize", 10) // Optional, default: 10. If set and if schema inferred, number of rows to infer schema from
+      //      .option("workbookPassword", "pass") // Optional, default None. Requires unlimited strength JCE for older JVMs
+      //      .option("location", path)
+      .load(file)
 
     val dir = new File(path)
     val excelFiles = dir.listFiles.sorted.map(f => f.toString)  // Array[String]
     excelFiles.foreach(println)
 
-    val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id()).filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
-   // val ppdf = dfs.reduce(_.union(_))
+    val dfs = excelFiles.map(f => readExcel(f).withColumn("id", monotonically_increasing_id())
+      .filter(col("id") >= 2).orderBy("Date"))  // Array[DataFrame]  .orderBy("Date")
+    //val ppdf = dfs.reduce(_.union(_))
 
-   val trimFiles = excelFiles.map(x =>  x.replaceAll("^.{67}", "").replaceAll("[a-z]|[0-9]|/|\\.| ", ""))
-//    val trimFiles = excelFiles.map(x =>  x.replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", ""))
-   trimFiles.foreach(println)
+    val trimFiles = excelFiles.map(x =>  x.replaceAll("^.{67}", "")
+      .replaceAll("[a-z]|[0-9]|/|\\.| ", ""))
 
     dfs.foreach(x => x.show())
-
-//    val t = excelFiles(0).replaceAll("[a-zA-z]|[0-9]|/|\\.| ", "").replaceAll("^.{2}", "")
-//    println(t)
-
-    //random double array test
-
-    Random.nextDouble()
+    trimFiles.foreach(println)
 
   }
 }

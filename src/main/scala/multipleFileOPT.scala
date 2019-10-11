@@ -127,8 +127,8 @@ object multipleFileOPT extends App{
     println("closeNum: " + closeNum + "\ncloseAvg: " + closeAvg + "\ncloseSum: " + closeSum)
 
     val closeWithIndex = closeRDD.zipWithIndex()
-    println("closeWithIndex: ")
-    closeWithIndex.foreach(println)
+    //println("closeWithIndex: ")
+    //closeWithIndex.foreach(println)
 
     val indexCloseRDD = closeWithIndex.map{case (k, v) => (v, k)}
 
@@ -194,7 +194,7 @@ object multipleFileOPT extends App{
               for(i <- longestDay - 1 until emaAryBuf1.size){
                 difAryBuf += emaAryBuf1(i) - emaAryBuf2(i)
               }
-              println("\nDIF: " + difAryBuf)
+              //println("\nDIF: " + difAryBuf)
               println("\n DIF length: " + difAryBuf.size)
 
               val difMap = sc.parallelize(difAryBuf).zipWithIndex.map{case (k, v) => (v, k)}.collect().toMap
@@ -202,7 +202,7 @@ object multipleFileOPT extends App{
               val macdAryBuf = ArrayBuffer[Double]()
               macdAryBuf ++= Ema(index(2), difMap)
               println("\nName: " + trimFiles(terms))
-              println("\nMACD: " + macdAryBuf)
+              //println("\nMACD: " + macdAryBuf)
               println( "\n MACD length: " + macdAryBuf.size)
 
 
@@ -229,7 +229,7 @@ object multipleFileOPT extends App{
 
               val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 
-              trans.transSimulation(j)
+              trans.transSimulation(4)
               trans.transFreqVerify()
 
               val threshold = trans.threshold
@@ -287,8 +287,8 @@ object multipleFileOPT extends App{
 
       val maxExpectation: Double = singleFileExpMap.valuesIterator.max
       val maxCumulation: Double = singleFileCumMap.valuesIterator.max
-      val maxExpectationKey: String = singleFileExpMap.filter(_._2 == maxExpectation).keys.mkString
-      val maxCumulationKey: String = singleFileCumMap.filter(_._2 == maxCumulation).keys.mkString
+      val maxExpectationKey: String = singleFileExpMap.find(_._2 == maxExpectation).map(_._1).mkString
+      val maxCumulationKey: String = singleFileCumMap.find(_._2 == maxCumulation).map(_._1).mkString
       val MaxExpSTD: Double = singleFileSTDMap.filter(_._1 == maxExpectationKey).values.mkString.toDouble
 
       try {
