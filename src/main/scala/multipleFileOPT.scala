@@ -229,7 +229,7 @@ object multipleFileOPT extends App{
 
               val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
 
-              trans.transSimulation(4)
+              trans.transSimulation(j)
               trans.transFreqVerify()
 
               val threshold = trans.threshold
@@ -320,24 +320,24 @@ object multipleFileOPT extends App{
       }
       connection.close()
 
-      singleFileExpMap = ListMap(singleFileExpMap.toSeq.sortWith(_._2 > _._2):_*)
-      println("\nMaximum Rates: ")
-      singleFileExpMap.foreach(println)
-
-      println("pulse")
+//      singleFileExpMap = ListMap(singleFileExpMap.toSeq.sortWith(_._2 > _._2):_*)
+//      println("\nMaximum Rates: ")
+//      singleFileExpMap.foreach(println)
+//
+//      println("pulse")
     }
 
     //opMap.foreach(println)
 
-    typeTwoCrashFile.foreach(x => println("\n File : " + x + " don't have any transaction!!"))
-    typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
-    typeThreeCrashFile.foreach(x => println("\n File : " + x + "have certain close price error!!"))
-
-    //println("\n Max: " + opMap.maxBy(_._2))
-    //println("\n Length: " + opMap.size)
-    println("\n Break parameter's number:" + test)
-
-    transTime.foreach(x => println("\ntransTime: "+x))
+//    typeTwoCrashFile.foreach(x => println("\n File : " + x + " don't have any transaction!!"))
+//    typeOneCrashFile.foreach(x => println("\n File : " + x + " don't have enough data!!"))
+//    typeThreeCrashFile.foreach(x => println("\n File : " + x + "have certain close price error!!"))
+//
+//    //println("\n Max: " + opMap.maxBy(_._2))
+//    //println("\n Length: " + opMap.size)
+//    println("\n Break parameter's number:" + test)
+//
+//    transTime.foreach(x => println("\ntransTime: "+x))
     //sizeAry.foreach(x => println("\narySize: "+x))
     //println("\n skipDays: " + skipDays)
   }

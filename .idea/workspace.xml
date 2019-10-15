@@ -66,7 +66,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Diff &amp; Merge" />
+    <property name="settings.editor.selected.configurable" value="com.intellij.jarRepository.settings.RemoteRepositoriesConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -80,7 +80,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.multipleFileOPT">
+  <component name="RunManager" selected="Application.OneFileOneParameter">
     <configuration name="MACDParameterOptimization" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="MACDParameterOptimization" />
       <module name="SparkProject_01" />
@@ -125,9 +125,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.OneFileOneParameter" />
         <item itemvalue="Application.multipleFileOPT" />
         <item itemvalue="Application.test" />
-        <item itemvalue="Application.OneFileOneParameter" />
         <item itemvalue="Application.multipleFile_test" />
         <item itemvalue="Application.MACDParameterOptimization" />
       </list>

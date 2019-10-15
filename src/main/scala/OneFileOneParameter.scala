@@ -18,7 +18,7 @@ object OneFileOneParameter {
       .getOrCreate()
 
     val sc = spark.sparkContext
-    val df = spark.read.csv("/Users/caichengyun/Documents/User/CGU/Subject/FYP/CSV/1. 2301 光寶科.csv")
+    val df = spark.read.csv("/Users/caichengyun/Desktop/17. 4904 遠傳 copy.csv")
 
     //val dfInverse = df.orderBy("_c0")// the date of data must be ascending (r0=2019/01/02 r1=2019/01/01)
 
@@ -58,7 +58,7 @@ object OneFileOneParameter {
     val indexCloseMap01 = ListMap(indexCloseMap.toSeq.sortWith(_._1 < _._1):_*)
     indexCloseMap01.foreach(println)
 
-    val index: Array[Int] = Array(5, 11, 7)
+    val index: Array[Int] = Array(30, 47, 43)
 
     //Ema function
     val Ema = (index: Int, closeData: Map[Long, Double]) => {
@@ -133,6 +133,7 @@ object OneFileOneParameter {
     println("\nMACD: " + macdAryBuf)
     println( "\n MACD length: " + macdAryBuf.size)
 
+    //equal all data
     val longestDays: Array[Int] = Array(30, 51, 50)
     val longest3rdNDay = (3.45*(longestDays(2)+1)).ceil.toInt
 
