@@ -164,6 +164,7 @@ object multipleFileOPT extends App{
       var singleFileExpMap: Map[String, Double] = Map()
       var singleFileCumMap: Map[String, Double] = Map()
       var singleFileSTDMap: Map[String, Double] = Map()
+      var frequencyMap: Map[String, Int] = Map()
 
       //Start para's OPT
       for(x <- longestDays(0) to 5 by -1){
@@ -224,7 +225,6 @@ object multipleFileOPT extends App{
               var breakDaysMap: Map[String, Double] = Map()
               var maximumRateMap: Map[Double, Double] = Map()
               var expectationMap: Map[Double, Double] = Map()
-              var frequencyMap: Map[Double, Double] = Map()
               val breakThresholdAryBuf = ArrayBuffer[Double]()
 
               val trans = new Transaction(macdAryBuf, difAryBuf, indexCloseMap, longestDay)
@@ -245,7 +245,6 @@ object multipleFileOPT extends App{
               }
 
               println("count:" + transCounts)
-              frequencyMap += (threshold -> transCounts)
 
               val CRate = trans.calculateCum()
               val ERate = trans.calculateExp()
@@ -253,10 +252,12 @@ object multipleFileOPT extends App{
               val STD = trans.calculateStd()
 
               //multiple Files analysis
-
-              singleFileExpMap += (opIndex -> ERate)
-              singleFileCumMap += (opIndex -> CRate)
-              singleFileSTDMap += (opIndex -> STD)
+              if(transCounts >= 10){
+                singleFileExpMap += (opIndex -> ERate)
+                singleFileCumMap += (opIndex -> CRate)
+                singleFileSTDMap += (opIndex -> STD)
+                frequencyMap += (opIndex -> transCounts)
+              }
 
               if(x == 12 && y == 26 && z == 9){
 
@@ -286,18 +287,22 @@ object multipleFileOPT extends App{
       }
 
       val maxExpectation: Double = singleFileExpMap.valuesIterator.max
-      val maxCumulation: Double = singleFileCumMap.valuesIterator.max
       val maxExpectationKey: String = singleFileExpMap.find(_._2 == maxExpectation).map(_._1).mkString
+      val maxExpSTD: Double = singleFileSTDMap.filter(_._1 == maxExpectationKey).values.mkString.toDouble
+      val maxExpTransFreq: Int = frequencyMap.filter(_._1 == maxExpectationKey).values.mkString.toInt
+
+      val maxCumulation: Double = singleFileCumMap.valuesIterator.max
       val maxCumulationKey: String = singleFileCumMap.find(_._2 == maxCumulation).map(_._1).mkString
-      val MaxExpSTD: Double = singleFileSTDMap.filter(_._1 == maxExpectationKey).values.mkString.toDouble
+      val maxCumTransFreq: Int = frequencyMap.filter(_._1 == maxCumulationKey).values.mkString.toInt
 
       try {
         Class.forName(driver)
         connection = DriverManager.getConnection(url, username, password)
 
         val insertSQL = "INSERT INTO scalaTest."+ "finalFYP" + " (Name, Threshold, MaxExpParameter, MaxExpectation" +
-          ", OriginalExpectation, MaxExpSTD, MaxCumParameter, MaxCumulation, OriginalCumulation, OriginalSTD)" +
-          " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+          ", OriginalExpectation, MaxCumParameter, MaxCumulation, OriginalCumulation, MaxExpSTD, OriginalSTD" +
+          ", MaxExpTransFreq, MaxCumTransFreq)" +
+          " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
         val prep: PreparedStatement = connection.prepareStatement(insertSQL)
 
@@ -306,11 +311,13 @@ object multipleFileOPT extends App{
         prep.setString(3, maxExpectationKey)
         prep.setDouble(4, maxExpectation)
         prep.setDouble(5, originalExp)
-        prep.setDouble(6, MaxExpSTD)
-        prep.setString(7, maxCumulationKey)
-        prep.setDouble(8, maxCumulation)
-        prep.setDouble(9, originalCum)
+        prep.setString(6, maxCumulationKey)
+        prep.setDouble(7, maxCumulation)
+        prep.setDouble(8, originalCum)
+        prep.setDouble(9, maxExpSTD)
         prep.setDouble(10, originalSTD)
+        prep.setInt(11, maxExpTransFreq)
+        prep.setInt(12, maxCumTransFreq)
         prep.execute()
 
         prep.close()
