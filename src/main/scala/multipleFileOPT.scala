@@ -6,7 +6,6 @@ import org.apache.spark.sql.functions.{col, monotonically_increasing_id}
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
-import scala.collection.immutable.ListMap
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Breaks._
 
@@ -169,7 +168,7 @@ object multipleFileOPT extends App{
       //Start para's OPT
       for(x <- longestDays(0) to 5 by -1){
         for(y <- longestDays(1) to x + 5 by -1){
-          for(z <- longestDays(2) to 2 by -1){
+          for(z <- longestDays(2) to 5 by -1){
             //Threshold has no transaction will break()
             breakable{
 

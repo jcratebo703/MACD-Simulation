@@ -53,8 +53,15 @@ object test {
     val trimFiles = excelFiles.map(x =>  x.replaceAll("^.{67}", "")
       .replaceAll("[a-z]|[0-9]|/|\\.| ", ""))
 
-    dfs.foreach(x => x.show())
-    trimFiles.foreach(println)
+//    dfs.foreach(x => x.show())
+//    trimFiles.foreach(println)
+
+    dfs(0).show()
+    println(trimFiles(0))
+
+    for(terms <- dfs.indices){
+
+    }
 
   }
 }

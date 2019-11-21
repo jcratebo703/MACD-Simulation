@@ -1,28 +1,14 @@
-import org.apache.spark.sql.{Row, SparkSession}
-import scala.collection.mutable.ArrayBuffer
-import scala.util.control.Breaks.{break, breakable}
+val longestDays: Array[Int] = Array(30, 51, 50)
 
+var count: Int = 0
 
-val singleFileExpMap = Map("Neil" -> 97.123456, "Buzz" -> 97.123456, "Michael" -> 95.006489)
-val maxExpectation: Double = singleFileExpMap.valuesIterator.max
-//val maxCumulation: Double = singleFileCumMap.valuesIterator.max
-val maxExpectationKey: String = singleFileExpMap.find(_._2 == maxExpectation).map(_._1).mkString
+for(x <- longestDays(0) to 5 by -1){
+  for(y <- longestDays(1) to x + 5 by -1){
+    for(z <- longestDays(2) to 5 by -1) {
 
-val MaxExpSTD: Double = singleFileExpMap.filter(_._1 == maxExpectationKey).values.mkString.toDouble
+    count+=1
+    }
+  }
+}
 
-//println(5)
-//
-//for(x <- 0 to 10) {
-//  //breakable{
-//  for (y <- 0 to 10) {
-//    breakable {
-//      for (z <- 0 to 10) {
-//        if (z > 5) {
-//          break()
-//        }
-//        println(x.toString + " " + y.toString + " " + z.toString)
-//      }
-//    }
-//  }
-////}
-//}
+print(count)

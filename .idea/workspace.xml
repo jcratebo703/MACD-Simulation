@@ -80,16 +80,16 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.multipleFileOPT">
-    <configuration name="MACDParameterOptimization" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="MACDParameterOptimization" />
+  <component name="RunManager" selected="Application.getFirstThresholdExp">
+    <configuration name="OneFileOneParameter" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="OneFileOneParameter" />
       <module name="SparkProject_01" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="OneFileOneParameter" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="OneFileOneParameter" />
+    <configuration name="getFirstThresholdExp" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="getFirstThresholdExp" />
       <module name="SparkProject_01" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -117,19 +117,19 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.MACDParameterOptimization" />
       <item itemvalue="Application.OneFileOneParameter" />
       <item itemvalue="Application.multipleFile_test" />
       <item itemvalue="Application.multipleFileOPT" />
       <item itemvalue="Application.test" />
+      <item itemvalue="Application.getFirstThresholdExp" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.getFirstThresholdExp" />
+        <item itemvalue="Application.test" />
         <item itemvalue="Application.multipleFileOPT" />
         <item itemvalue="Application.OneFileOneParameter" />
-        <item itemvalue="Application.test" />
         <item itemvalue="Application.multipleFile_test" />
-        <item itemvalue="Application.MACDParameterOptimization" />
       </list>
     </recent_temporary>
   </component>
